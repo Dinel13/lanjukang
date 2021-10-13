@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/dinel13/lanjukang/dto"
@@ -13,14 +14,15 @@ func (m *Repository) SignupHandler(w http.ResponseWriter, r *http.Request) {
 	// Parse the request body
 	var user dto.UserReuqest
 	err := json.NewDecoder(r.Body).Decode(&user)
+	// err = errors.New("invalid request body")
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		utilities.WriteJsonError(w, err, http.StatusBadRequest)
 		return
 	}
 
 	// Validate the user data
 	if user.Email == "" {
-		http.Error(w, "Please provide an email", http.StatusBadRequest)
+		utilities.WriteJsonError(w, errors.New("Please provide an email"), http.StatusBadRequest)
 		return
 	}
 
