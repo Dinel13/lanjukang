@@ -4,8 +4,8 @@ import "time"
 
 type User struct {
 	Id        int       `json:"id"`
-	FullName  string    `json:"fullname"`
-	NickName  string    `json:"nickname"`
+	FullName  string    `json:"full_name"`
+	NickName  string    `json:"nick_name"`
 	Password  string    `json:"password"`
 	Email     string    `json:"email"`
 	Role      int       `json:"role"`
@@ -17,15 +17,32 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+// UserSignUp is for reusetsignup
 type UserSignUp struct {
-	FullName string `json:"fullname"`
+	FullName string `json:"full_name"`
 	Password string `json:"password"`
 	Email    string `json:"email"`
 }
 
-type UserSignIn struct {
+// UserPOstSignUp is result from query db Signup
+type UserPostSignUp struct {
+	Id       int    `json:"id"`
+	NickName string `json:"nick_name"`
+	Role     int    `json:"role"`
+}
+
+// UserLogin is for login request
+type UserLogin struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+// UserPOstLOgin is result from query db login
+type UserPostLogin struct {
+	Id       int    `json:"id"`
+	NickName string `json:"nick_name"`
+	Password string `json:"password"`
+	Role     int    `json:"role"`
 }
 
 type UserByEmail struct {

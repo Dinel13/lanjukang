@@ -8,13 +8,13 @@ import (
 	"github.com/dinel13/lanjukang/models"
 )
 
-func (m *postgresDbRepo) CreateUser(res models.UserSignUp) (int, error) {
+func (m *postgresDbRepo) CreateUser(res models.UserSignUp) (*models.UserPostSignUp, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	var newId int
+	var user models.UserPostSignUp
 
-	stmt := `INSERT INTO users (full_name, nick_name, password, email) VALUES ($1, $2, $3, $4) returning id`
+	stmt := `INSERT INTO users (full_name, nick_name, password, email) VALUES ($1, $2, $3, $4) returning id, nick_name, role`
 
 	nickName := res.FullName
 	if len(res.FullName) > 8 {
@@ -26,26 +26,35 @@ func (m *postgresDbRepo) CreateUser(res models.UserSignUp) (int, error) {
 		nickName,
 		res.Password,
 		res.Email,
-	).Scan(&newId)
+	).Scan(
+		&user.Id,
+		&user.NickName,
+		&user.Role,
+	)
 
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	return newId, nil
+	return &user, nil
 
 }
 
 // GetUserByEmail returns a user by email
-func (m *postgresDbRepo) GetUserByEmail(email string) (*models.UserByEmail, error) {
+func (m *postgresDbRepo) GetUserByEmail(email string) (*models.UserPostLogin, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	query := `SELECT email FROM users WHERE email = $1`
+	query := `SELECT id, nick_name, password, role FROM users WHERE email = $1`
 	row := m.DB.QueryRowContext(ctx, query, email)
 
-	var user models.UserByEmail
-	err := row.Scan(&user.Email)
+	var user models.UserPostLogin
+	err := row.Scan(
+		&user.Id,
+		&user.NickName,
+		&user.Password,
+		&user.Role,
+	)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}

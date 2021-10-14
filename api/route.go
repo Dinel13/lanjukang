@@ -6,20 +6,18 @@ import (
 	"github.com/dinel13/lanjukang/config"
 	"github.com/dinel13/lanjukang/handlers"
 	"github.com/dinel13/lanjukang/middleware"
-	"github.com/go-chi/chi"
-	chiMiddleware "github.com/go-chi/chi/middleware"
+	"github.com/julienschmidt/httprouter"
 )
 
 func routes(app *config.AppConfig) http.Handler {
-	mux := chi.NewRouter()
+	r := httprouter.New()
 
-	mux.Use(chiMiddleware.Recoverer)
-	mux.Use(middleware.TestMiddleware)
+	// make a recover midleware
+	// mux.Use(chiMiddleware.Recoverer)
 
-	mux.Get("/", handlers.Repo.Home)
-	mux.Post("/", handlers.Repo.Home)
-	mux.Post("/signup", handlers.Repo.SignupHandler)
-	// mux.Post("/login", handlers.Repo.LoginHandler)
+	r.HandlerFunc(http.MethodGet, "/", handlers.Repo.Home)
+	r.HandlerFunc(http.MethodPost, "/signup", handlers.Repo.SignupHandler)
+	r.HandlerFunc(http.MethodPost, "/login", handlers.Repo.LoginHandler)
 
-	return mux
+	return middleware.EnableCors(r)
 }
