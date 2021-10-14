@@ -9,7 +9,6 @@ require github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
 require github.com/lib/pq v1.10.3
 
 require (
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
-	github.com/pascaldekloe/jwt v1.10.0 // indirect
-	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible 
+	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 
 )

@@ -51,11 +51,11 @@ func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 
 	tokenString := strings.Replace(authorizationHeader, "Bearer ", "", -1)
 	fmt.Println(tokenString)
-	id, err := utilities.ParseToken(tokenString, m.App.JwtSecret)
+	id, role, err := utilities.ParseToken(tokenString, m.App.JwtSecret)
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(id)
+	fmt.Println(id, role)
 
 	userId, err := m.DB.CreateUser(user)
 	if err != nil {

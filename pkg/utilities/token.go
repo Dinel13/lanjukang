@@ -39,7 +39,7 @@ func CreateToken(userId int, role int, secretKey string) (string, error) {
 	return signedToken, nil
 }
 
-func ParseToken(tokenString string, secretKey string) (int, error) {
+func ParseToken(tokenString string, secretKey string) (int, int, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if method, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("signing method invalid")
@@ -51,16 +51,26 @@ func ParseToken(tokenString string, secretKey string) (int, error) {
 	})
 
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok || !token.Valid {
-		return 0, errors.New("token invalid")
+		return 0, 0, errors.New("token invalid")
 	}
 
-	// TODO: check if token is expired
+	// look the containts of claims
+	id := int(claims["id"].(float64))
+	role := int(claims["role"].(float64))
+	expires_at := int(claims["exp"].(float64))
 
-	id := claims["id"].(float64)
-	return int(id), nil
+	// convert expires_at to time.Time
+	expires_at_time := time.Unix(int64(expires_at), 0)
+
+	// cek if token expired
+	if time.Now().Unix() > expires_at_time.Unix() {
+		return 0, 0, errors.New("token expired, please login again")
+	}
+
+	return int(id), int(role), nil
 }
