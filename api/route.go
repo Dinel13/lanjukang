@@ -19,5 +19,7 @@ func routes(app *config.AppConfig) http.Handler {
 	r.HandlerFunc(http.MethodPost, "/signup", handlers.Repo.SignupHandler)
 	r.HandlerFunc(http.MethodPost, "/login", handlers.Repo.LoginHandler)
 
+	r.HandlerFunc(http.MethodPost, "/service/create", handlers.Repo.CreateService)
+
 	return middleware.EnableCors(r)
 }

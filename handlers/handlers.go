@@ -1,13 +1,10 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/dinel13/lanjukang/config"
 	"github.com/dinel13/lanjukang/db/driver"
-	"github.com/dinel13/lanjukang/models"
 	"github.com/dinel13/lanjukang/pkg/utilities"
 	"github.com/dinel13/lanjukang/repository"
 	dbrepo "github.com/dinel13/lanjukang/repository/dbRepo"
@@ -36,31 +33,17 @@ func NewHandlers(r *Repository) {
 }
 
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	user := models.UserSignUp{
-		FullName: "Dinel",
-		Email:    "",
-		Password: "",
+	type Home struct {
+		Name    string
+		Version string
+		Status  string
 	}
 
-	// get token from header
-	authorizationHeader := r.Header.Get("Authorization")
-	if !strings.Contains(authorizationHeader, "Bearer") {
-		http.Error(w, "Invalid token", http.StatusBadRequest)
-		return
+	response := Home{
+		Name:    m.App.AppName,
+		Version: m.App.AppVersion,
+		Status:  "ok",
 	}
 
-	tokenString := strings.Replace(authorizationHeader, "Bearer ", "", -1)
-	fmt.Println(tokenString)
-	id, role, err := utilities.ParseToken(tokenString, m.App.JwtSecret)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(id, role)
-
-	userId, err := m.DB.CreateUser(user)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(userId)
-	w.Write([]byte("Hello World!"))
+	utilities.WriteJson(w, http.StatusOK, response, "respon")
 }

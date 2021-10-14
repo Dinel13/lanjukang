@@ -13,3 +13,12 @@ token tidak mau diparse karena interface{}
 claims["id"].(float64) untuk ubahh interfcae{} menjadi float64
 lalu ubah float64 menjadi int dengna int(claims["id"].(float64)) 
 
+
+todo
+
+ubah type decription ke text
+
+buat fungsi ubag role user
+
+
+

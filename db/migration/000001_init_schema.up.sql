@@ -13,24 +13,65 @@ CREATE TABLE "users" (
   "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
 
-CREATE TABLE "bookings" (
+CREATE TABLE "services" (
   "id" bigserial PRIMARY KEY,
-  "booker" bigint NOT NULL,
-  "toko" bigint NOT NULL,
-  "created_at" timestamptz NOT NULL DEFAULT (now())
+  "name" varchar NOT NULL,
+  "price" int NOT NULL,
+  "image" varchar NOT NULL,
+  "type_id" int NOT NULL,
+  "location" int NOT NULL,
+  "capacity" int NOT NULL DEFAULT 1,
+  "descriptin" TEXT NOT NULL,
+  "rating" INT DEFAULT NULL,
+  "comments" INT DEFAULT NULL,
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
 
-ALTER TABLE "bookings" ADD FOREIGN KEY ("booker") REFERENCES "users" ("id") ON DELETE CASCADE;
-ALTER TABLE "bookings" ADD FOREIGN KEY ("toko") REFERENCES "users" ("id") ON DELETE CASCADE;
+CREATE TABLE "type_services" (
+  "id" bigserial PRIMARY KEY,
+  "name" varchar NOT NULL,
+  "image" varchar NOT NULL,
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz NOT NULL DEFAULT (now())
+);
+
+CREATE TABLE "locations" (
+  "id" bigserial PRIMARY KEY,
+  "name" varchar NOT NULL,
+  "address" varchar NOT NULL,
+  "image" varchar DEFAULT NULL,
+  "coordinate " varchar NOT NULL,
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz NOT NULL DEFAULT (now())
+);
+
+CREATE TABLE "comments" (
+  "id" bigserial PRIMARY KEY,
+  "userId" INT NOT NULL,
+  "content" varchar NOT NULL,
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz NOT NULL DEFAULT (now())
+);
+
+
+
+ALTER TABLE "services"
+ADD FOREIGN KEY ("type_id") REFERENCES "type_services" ("id") ON DELETE CASCADE;
+
+ALTER TABLE "services"
+ADD FOREIGN KEY ("location") REFERENCES "locations" ("id") ON DELETE CASCADE;
+
+ALTER TABLE "services"
+ADD FOREIGN KEY ("comments") REFERENCES "comments" ("id") ON DELETE CASCADE;
+
+ALTER TABLE "comments"
+ADD FOREIGN KEY ("userId") REFERENCES "users" ("id") ON DELETE CASCADE;
 
 CREATE INDEX ON "users" ("id");
-
-CREATE INDEX ON "bookings" ("id");
-
-CREATE INDEX ON "kapals" ("id");
-
-CREATE INDEX ON "bookings" ("booker");
-
-CREATE INDEX ON "bookings" ("toko");
-
-CREATE INDEX ON "bookings" ("booker", "toko");
+CREATE INDEX ON "services" ("id");
+CREATE INDEX ON "type_services" ("id");
+CREATE INDEX ON "locations" ("id");
+CREATE INDEX ON "comments" ("id");
+CREATE INDEX ON "services" ("type_id", "location", "comments" );
+CREATE INDEX ON "comments" ("userId");
