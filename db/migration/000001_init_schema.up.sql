@@ -1,11 +1,14 @@
 CREATE TABLE "users" (
   "id" bigserial PRIMARY KEY,
-  "name" varchar NOT NULL,
+  "full_name" varchar NOT NULL,
   "nick_name" varchar DEFAULT NULL,
+  "password" varchar NOT NULL,
   "email" varchar NOT NULL,
   "role" int NOT NULL DEFAULT 0,
+  "verified" boolean NOT NULL DEFAULT false,
   "image" varchar DEFAULT NULL,
-  "password" varchar NOT NULL,
+  "phone" varchar DEFAULT NULL,
+  "address" varchar DEFAULT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
@@ -17,14 +20,8 @@ CREATE TABLE "bookings" (
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
-CREATE TABLE "kapals" (
-  "id" bigserial PRIMARY KEY,
-  "amount" bigint NOT NULL,
-  "created_at" timestamptz NOT NULL DEFAULT (now())
-);
-
-ALTER TABLE "bookings" ADD FOREIGN KEY ("booker") REFERENCES "users" ("id");
-ALTER TABLE "bookings" ADD FOREIGN KEY ("toko") REFERENCES "users" ("id");
+ALTER TABLE "bookings" ADD FOREIGN KEY ("booker") REFERENCES "users" ("id") ON DELETE CASCADE;
+ALTER TABLE "bookings" ADD FOREIGN KEY ("toko") REFERENCES "users" ("id") ON DELETE CASCADE;
 
 CREATE INDEX ON "users" ("id");
 

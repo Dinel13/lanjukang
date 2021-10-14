@@ -17,7 +17,9 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Use(middleware.TestMiddleware)
 
 	mux.Get("/", handlers.Repo.Home)
+	mux.Post("/", handlers.Repo.Home)
 	mux.Post("/signup", handlers.Repo.SignupHandler)
+	// mux.Post("/login", handlers.Repo.LoginHandler)
 
 	return mux
 }

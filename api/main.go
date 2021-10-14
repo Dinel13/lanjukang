@@ -18,6 +18,7 @@ var app config.AppConfig
 func main() {
 	app.AppName = "Lanjukang"
 	app.AppVersion = "1.0.0"
+	app.JwtSecret = "secret"
 
 	db, err := run()
 	if err != nil {
