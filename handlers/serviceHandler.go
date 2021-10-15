@@ -11,6 +11,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+// CreateService handler for get service detail
 func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 
 	// cek if request have valid token
@@ -40,17 +41,7 @@ func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 
 	// end validate
 
-	uploadedImage, header, err := r.FormFile("image")
-	if err != nil {
-		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
-	}
-	defer uploadedImage.Close()
-
-	filename, err := utilities.UploadedImage(uploadedImage, header)
-	if err != nil {
-		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
-	}
-
+	// convert to int
 	priceInt, err := strconv.Atoi(price)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
@@ -71,6 +62,18 @@ func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
 	}
 
+	// upload image
+	uploadedImage, header, err := r.FormFile("image")
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+	}
+	defer uploadedImage.Close()
+
+	filename, err := utilities.UploadedImage(uploadedImage, header)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+	}
+
 	service := models.ServiceRequest{
 		Name:        name,
 		Price:       priceInt,
@@ -84,6 +87,7 @@ func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 
 	newService, err := m.DB.CreateService(service)
 	if err != nil {
+		utilities.DeleteImage(filename)
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
 	}
 
@@ -117,4 +121,112 @@ func (m *Repository) ListAllService(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utilities.WriteJson(w, http.StatusOK, services, "services")
+}
+
+// UpdateService handler for update service
+func (m *Repository) UpdateService(w http.ResponseWriter, r *http.Request) {
+
+	// get id from url
+	params := httprouter.ParamsFromContext(r.Context())
+	id, err := strconv.Atoi(params.ByName("id"))
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	// cek if request have valid token
+	idUser, role, err := middleware.ChecToken(w, r, m.App.JwtSecret)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+	if role != 1 || idUser == 0 {
+		utilities.WriteJsonError(w, errors.New("not allowed, become admin first"), http.StatusBadRequest)
+		return
+	}
+
+	// get data from request
+	if err := r.ParseMultipartForm(1024); err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	name := r.FormValue("name")
+	ownerId := r.FormValue("owner_id")
+	price := r.FormValue("price")
+	oldImage := r.FormValue("old_image")
+	typeId := r.FormValue("type")
+	capacity := r.FormValue("capacity")
+	location := r.FormValue("location")
+	description := r.FormValue("description")
+
+	// validate
+
+	// end validate
+
+	// convert data to int
+	ownerInt, err := strconv.Atoi(ownerId)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	priceInt, err := strconv.Atoi(price)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+	}
+
+	typeInt, err := strconv.Atoi(typeId)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	capacityInt, err := strconv.Atoi(capacity)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+	}
+
+	locationInt, err := strconv.Atoi(location)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+	}
+
+	// validate owner of user
+	if idUser != ownerInt {
+		utilities.WriteJsonError(w, errors.New("not allowed"), http.StatusBadRequest)
+		return
+	}
+
+	uploadedImage, header, err := r.FormFile("image")
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+	}
+	defer uploadedImage.Close()
+
+	filename, err := utilities.UploadedImage(uploadedImage, header)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+	}
+
+	service := models.ServiceUpdateRequest{
+		Name:        name,
+		Price:       priceInt,
+		Image:       filename,
+		TypeId:      typeInt,
+		Capacity:    capacityInt,
+		LocationId:  locationInt,
+		Description: description,
+	}
+
+	updatedService, err := m.DB.UpdateService(id, service)
+	if err != nil {
+		utilities.DeleteImage(filename)
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+	}
+
+	// delete old image
+	_ = utilities.DeleteImage(oldImage)
+
+	utilities.WriteJson(w, http.StatusOK, updatedService, "service")
 }

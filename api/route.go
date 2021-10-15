@@ -16,13 +16,17 @@ func routes(app *config.AppConfig) http.Handler {
 	// mux.Use(chiMiddleware.Recoverer)
 
 	r.HandlerFunc(http.MethodGet, "/", handlers.Repo.Home)
+
+	// user
 	r.HandlerFunc(http.MethodPost, "/signup", handlers.Repo.SignupHandler)
 	r.HandlerFunc(http.MethodPost, "/login", handlers.Repo.LoginHandler)
 	r.HandlerFunc(http.MethodPost, "/update-role", handlers.Repo.BecomeAdminHandler)
 
+	// service
 	r.HandlerFunc(http.MethodPost, "/service/create", handlers.Repo.CreateService)
 	r.HandlerFunc(http.MethodGet, "/service/list", handlers.Repo.ListAllService)
 	r.HandlerFunc(http.MethodGet, "/service/detail/:id", handlers.Repo.GetServiceDetail)
+	r.HandlerFunc(http.MethodPut, "/service/:id", handlers.Repo.UpdateService)
 
 	return middleware.EnableCors(r)
 }

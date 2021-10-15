@@ -22,3 +22,8 @@ buat fungsi ubag role user
 
 tambah tipe data sort description
 
+bagaimana caranya mereturn map dan comment 
+
+pastiakn image terhapus jika gagal create services
+pastikan image terhapus jika update
+pastikan image terhapus jika delete

@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// UploadFile uploads a file to the server
 func UploadedImage(uploadedImage multipart.File, header *multipart.FileHeader) (string, error) {
 	dir, err := os.Getwd()
 	if err != nil {
@@ -35,4 +36,26 @@ func UploadedImage(uploadedImage multipart.File, header *multipart.FileHeader) (
 
 	return filename, nil
 
+}
+
+// DeleteImage is a function to delete image
+func DeleteImage(filename string) error {
+	dir, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	// change woking direktory in server
+	// becouse in server the cwd is in /
+	if dir != "/home/din/project/Lanjukang-be" {
+		dir = "/var/www/wisata"
+	}
+
+	fileLocation := filepath.Join(dir, "images", filename)
+	err = os.Remove(fileLocation)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -86,6 +86,49 @@ func (m *postgresDbRepo) GetDetailServiceByID(id int) (*models.ServiceDetailResp
 	return &service, nil
 }
 
+// UpdateService update service
+func (m *postgresDbRepo) UpdateService(id int, service models.ServiceUpdateRequest) (*models.ServicePostCreate, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `UPDATE services
+				SET name = $1, price = $2, image = $3, type_id = $4, capacity = $5,
+					location = $6, description = $7
+				WHERE id = $8
+				RETURNING id, name, price, image, type_id, capacity,	
+							location, description`
+
+	row := m.DB.QueryRowContext(ctx, stmt,
+		service.Name,
+		service.Price,
+		service.Image,
+		service.TypeId,
+		service.Capacity,
+		service.LocationId,
+		service.Description,
+		id,
+	)
+
+	var newServices models.ServicePostCreate
+
+	err := row.Scan(
+		&newServices.Id,
+		&newServices.Name,
+		&newServices.Price,
+		&newServices.Image,
+		&newServices.TypeId,
+		&newServices.Capacity,
+		&newServices.LocationId,
+		&newServices.Description,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &newServices, nil
+}
+
 // ListAllServices list all services
 func (m *postgresDbRepo) ListAllServices(limit int) ([]models.ServiceResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)

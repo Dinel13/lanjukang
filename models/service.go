@@ -62,6 +62,17 @@ type ServiceRequest struct {
 	Description string `json:"description"`
 }
 
+// ServiceUpdateRequest for incoming request
+type ServiceUpdateRequest struct {
+	Name        string `json:"name"`
+	Price       int    `json:"price"`
+	Image       string `json:"image"`
+	TypeId      int    `json:"type_id"`
+	Capacity    int    `json:"capacity"`
+	LocationId  int    `json:"location_id"`
+	Description string `json:"description"`
+}
+
 type ServicePostCreate struct {
 	Id          int    `json:"id"`
 	Name        string `json:"name"`
