@@ -84,3 +84,17 @@ func (m *postgresDbRepo) GetUserByID(id int) (*models.UserById, error) {
 
 	return &user, nil
 }
+
+// BecomeAdmin changes user role to admin
+func (m *postgresDbRepo) UpdateUserRole(id int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `UPDATE users SET role = $1 WHERE id = $2`
+	_, err := m.DB.ExecContext(ctx, stmt, 1, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

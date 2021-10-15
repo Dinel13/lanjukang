@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/dinel13/lanjukang/middleware"
 	"github.com/dinel13/lanjukang/models"
 	"github.com/dinel13/lanjukang/pkg/utilities"
 	"golang.org/x/crypto/bcrypt"
@@ -122,5 +123,37 @@ func (m *Repository) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Name:  existUser.NickName,
 	}
 	utilities.WriteJson(w, http.StatusOK, userResponse, "user")
+
+}
+
+// BecomeAdminHandler handles the become admin request
+func (m *Repository) BecomeAdminHandler(w http.ResponseWriter, r *http.Request) {
+	// cek if request have valid token
+	id, role, err := middleware.ChecToken(w, r, m.App.JwtSecret)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	// check if the user already become admin
+	if role == 1 {
+		utilities.WriteJsonError(w, errors.New("not allowed, you already admin"), http.StatusBadRequest)
+		return
+	}
+
+	// update the user to become an admin
+	err = m.DB.UpdateUserRole(id)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	token, err := utilities.CreateToken(id, 1, m.App.JwtSecret)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	utilities.WriteJson(w, http.StatusOK, token, "newToken")
 
 }

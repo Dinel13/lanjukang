@@ -13,13 +13,13 @@ import (
 func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 
 	// cek if request have valid token
-	id, role, err := middleware.ChecToken(w, r, m.App.JwtSecret)
+	_, role, err := middleware.ChecToken(w, r, m.App.JwtSecret)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
 		return
 	}
-	if id == 0 || role != 1 {
-		utilities.WriteJsonError(w, errors.New("not allowed, become owner first"), http.StatusBadRequest)
+	if role != 1 {
+		utilities.WriteJsonError(w, errors.New("not allowed, become admin first"), http.StatusBadRequest)
 		return
 	}
 
