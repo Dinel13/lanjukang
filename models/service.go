@@ -84,6 +84,18 @@ type ServicePostCreate struct {
 	Description string `json:"description"`
 }
 
+// ServiceDeleteRequest for incoming request delete
+type ServiceDeleteRequest struct {
+	OwnerId int    `json:"owner_id"`
+	Image   string `json:"image"`
+}
+
+// ServiceSortDetailResponse  for retunn sort info service
+type ServiceSortDetailResponse struct {
+	OwnerId int    `json:"owner_id"`
+	Image   string `json:"image"`
+}
+
 type Comment struct {
 	Id        int       `json:"id"`
 	UserId    int       `json:"user_id"`

@@ -86,6 +86,24 @@ func (m *postgresDbRepo) GetDetailServiceByID(id int) (*models.ServiceDetailResp
 	return &service, nil
 }
 
+// GetSortDetailServiceByID get service by id
+func (m *postgresDbRepo) GetSortDetailServiceByID(id int) (*models.ServiceSortDetailResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `SELECT owner_id, image FROM services WHERE id = $1`
+
+	row := m.DB.QueryRowContext(ctx, stmt, id)
+
+	var service models.ServiceSortDetailResponse
+	err := row.Scan(&service.OwnerId, &service.Image)
+	if err != nil {
+		return nil, err
+	}
+
+	return &service, nil
+}
+
 // UpdateService update service
 func (m *postgresDbRepo) UpdateService(id int, service models.ServiceUpdateRequest) (*models.ServicePostCreate, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -264,4 +282,20 @@ func (m *postgresDbRepo) ListAllServicesByLocation(locationId int, limit int) ([
 	}
 
 	return services, nil
+}
+
+// DeleteService delete service
+func (m *postgresDbRepo) DeleteService(id int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `DELETE FROM services WHERE id = $1`
+
+	_, err := m.DB.ExecContext(ctx, stmt, id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

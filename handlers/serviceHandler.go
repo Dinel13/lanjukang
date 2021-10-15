@@ -230,3 +230,54 @@ func (m *Repository) UpdateService(w http.ResponseWriter, r *http.Request) {
 
 	utilities.WriteJson(w, http.StatusOK, updatedService, "service")
 }
+
+// DeleteService handler for delete service
+func (m *Repository) DeleteService(w http.ResponseWriter, r *http.Request) {
+	// get id from url
+	params := httprouter.ParamsFromContext(r.Context())
+	id, err := strconv.Atoi(params.ByName("id"))
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	// cek if request have valid token
+	idUser, role, err := middleware.ChecToken(w, r, m.App.JwtSecret)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+	if role != 1 || idUser == 0 {
+		utilities.WriteJsonError(w, errors.New("not allowed, become admin first"), http.StatusBadRequest)
+		return
+	}
+
+	// get service data from database
+	service, err := m.DB.GetSortDetailServiceByID(id)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	if service == nil {
+		utilities.WriteJsonError(w, errors.New("service not found"), http.StatusBadRequest)
+		return
+	}
+
+	// validate owner of service
+	if idUser != service.OwnerId {
+		utilities.WriteJsonError(w, errors.New("not allowed"), http.StatusBadRequest)
+		return
+	}
+
+	// delete service
+	err = m.DB.DeleteService(id)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	_ = utilities.DeleteImage(service.Image)
+
+	utilities.WriteJson(w, http.StatusOK, "ok", "service")
+}
