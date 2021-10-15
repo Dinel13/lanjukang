@@ -18,11 +18,27 @@ type Service struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
+// ServiceResponse is a response for list service
+// not give detail of service
+type ServiceResponse struct {
+	Id       int     `json:"id"`
+	Owner    string  `json:"owner"`
+	OwnerId  int     `json:"owner_id"`
+	Name     string  `json:"name"`
+	Price    int     `json:"price"`
+	Image    string  `json:"image"`
+	Type     string  `json:"type"`
+	Capacity int     `json:"capacity"`
+	Location string  `json:"location"`
+	Rating   float32 `json:"rating"`
+}
+
 // ServiceRequest for incoming request
 type ServiceRequest struct {
 	Name        string `json:"name"`
 	Price       int    `json:"price"`
 	Image       string `json:"image"`
+	OwnerId     int    `json:"owner_id"`
 	TypeId      int    `json:"type_id"`
 	Capacity    int    `json:"capacity"`
 	LocationId  int    `json:"location_id"`

@@ -21,6 +21,7 @@ func routes(app *config.AppConfig) http.Handler {
 	r.HandlerFunc(http.MethodPost, "/update-role", handlers.Repo.BecomeAdminHandler)
 
 	r.HandlerFunc(http.MethodPost, "/service/create", handlers.Repo.CreateService)
+	r.HandlerFunc(http.MethodGet, "/service/list", handlers.Repo.ListAllService)
 
 	return middleware.EnableCors(r)
 }

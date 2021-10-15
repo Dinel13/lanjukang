@@ -13,12 +13,12 @@ import (
 func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 
 	// cek if request have valid token
-	_, role, err := middleware.ChecToken(w, r, m.App.JwtSecret)
+	id, role, err := middleware.ChecToken(w, r, m.App.JwtSecret)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
 		return
 	}
-	if role != 1 {
+	if role != 1 || id == 0 {
 		utilities.WriteJsonError(w, errors.New("not allowed, become admin first"), http.StatusBadRequest)
 		return
 	}
@@ -74,6 +74,7 @@ func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 		Name:        name,
 		Price:       priceInt,
 		Image:       filename,
+		OwnerId:     id,
 		TypeId:      typeInt,
 		Capacity:    capacityInt,
 		LocationId:  locationInt,
@@ -86,4 +87,15 @@ func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utilities.WriteJson(w, http.StatusOK, newService, "service")
+}
+
+// ListAllService handler for list all service
+func (m *Repository) ListAllService(w http.ResponseWriter, r *http.Request) {
+	services, err := m.DB.ListAllServices(5)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	utilities.WriteJson(w, http.StatusOK, services, "services")
 }

@@ -15,6 +15,7 @@ CREATE TABLE "users" (
 
 CREATE TABLE "services" (
   "id" bigserial PRIMARY KEY,
+  "owner_id" int NOT NULL,
   "name" varchar NOT NULL,
   "price" int NOT NULL,
   "image" varchar NOT NULL,
@@ -55,6 +56,8 @@ CREATE TABLE "comments" (
 );
 
 
+ALTER TABLE "services"
+ADD FOREIGN KEY ("owner_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 
 ALTER TABLE "services"
 ADD FOREIGN KEY ("type_id") REFERENCES "type_services" ("id") ON DELETE CASCADE;
@@ -73,5 +76,5 @@ CREATE INDEX ON "services" ("id");
 CREATE INDEX ON "type_services" ("id");
 CREATE INDEX ON "locations" ("id");
 CREATE INDEX ON "comments" ("id");
-CREATE INDEX ON "services" ("type_id", "location", "comments" );
+CREATE INDEX ON "services" ("owner_id", "type_id", "location", "comments" );
 CREATE INDEX ON "comments" ("userId");

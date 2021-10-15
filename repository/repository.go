@@ -9,4 +9,5 @@ type DatabaseRepo interface {
 	UpdateUserRole(int) error
 
 	CreateService(models.ServiceRequest) (*models.ServicePostCreate, error)
+	ListAllServices(limit int) ([]models.ServiceResponse, error)
 }
