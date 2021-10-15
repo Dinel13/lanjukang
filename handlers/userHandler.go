@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/dinel13/lanjukang/middleware"
 	"github.com/dinel13/lanjukang/models"
 	"github.com/dinel13/lanjukang/pkg/utilities"
+	"github.com/julienschmidt/httprouter"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -156,4 +158,24 @@ func (m *Repository) BecomeAdminHandler(w http.ResponseWriter, r *http.Request) 
 
 	utilities.WriteJson(w, http.StatusOK, token, "newToken")
 
+}
+
+// GetUserHandler handles the get user request
+func (m *Repository) GetUserHandler(w http.ResponseWriter, r *http.Request) {
+	// get the user id from request param
+	params := httprouter.ParamsFromContext(r.Context())
+	id, err := strconv.Atoi(params.ByName("id"))
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	// get the user
+	user, err := m.DB.GetUserForOtherUser(id)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	utilities.WriteJson(w, http.StatusOK, user, "user")
 }

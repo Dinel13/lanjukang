@@ -9,6 +9,7 @@ type DatabaseRepo interface {
 	GetUserByEmail(string) (*models.UserPostLogin, error)
 	GetUserByID(int) (*models.UserById, error)
 	UpdateUserRole(int) error
+	GetUserForOtherUser(int) (*models.UserDetail, error)
 
 	// Service
 	CreateService(models.ServiceRequest) (*models.ServicePostCreate, error)

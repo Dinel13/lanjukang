@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 type User struct {
 	Id        int       `json:"id"`
@@ -56,4 +59,16 @@ type UserById struct {
 type UserResponse struct {
 	Token string `json:"token"`
 	Name  string `json:"name"`
+}
+
+// UserDetail is for user detail
+// this will use to other user look thi user
+type UserDetail struct {
+	Id       int            `json:"id"`
+	FullName string         `json:"full_name"`
+	NickName string         `json:"nick_name"`
+	Email    string         `json:"email"`
+	Image    sql.NullString `json:"image"`
+	Phone    sql.NullString `json:"phone"`
+	Address  sql.NullString `json:"address"`
 }

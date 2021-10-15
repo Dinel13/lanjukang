@@ -98,3 +98,31 @@ func (m *postgresDbRepo) UpdateUserRole(id int) error {
 
 	return nil
 }
+
+// GetUserForOtherUser returns a user info for other user
+func (m *postgresDbRepo) GetUserForOtherUser(id int) (*models.UserDetail, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `SELECT id, full_name, nick_name, email, image, phone, address FROM users WHERE id = $1`
+	row := m.DB.QueryRowContext(ctx, stmt, id)
+
+	var user models.UserDetail
+	err := row.Scan(
+		&user.Id,
+		&user.FullName,
+		&user.NickName,
+		&user.Email,
+		&user.Image,
+		&user.Phone,
+		&user.Address,
+	)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
