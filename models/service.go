@@ -33,6 +33,23 @@ type ServiceResponse struct {
 	Rating   float32 `json:"rating"`
 }
 
+// ServiceDetailResponse is a responsen for detail service
+// return all field of service
+type ServiceDetailResponse struct {
+	Id          int     `json:"id"`
+	Owner       string  `json:"owner"`
+	OwnerId     int     `json:"owner_id"`
+	Name        string  `json:"name"`
+	Price       int     `json:"price"`
+	Image       string  `json:"image"`
+	Type        string  `json:"type"`
+	Capacity    int     `json:"capacity"`
+	Location    string  `json:"location"`
+	Rating      float32 `json:"rating"`
+	Description string  `json:"description"`
+	// Comments    []Comment `json:"comments"`
+}
+
 // ServiceRequest for incoming request
 type ServiceRequest struct {
 	Name        string `json:"name"`

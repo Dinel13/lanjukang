@@ -8,6 +8,7 @@ import (
 	"github.com/dinel13/lanjukang/middleware"
 	"github.com/dinel13/lanjukang/models"
 	"github.com/dinel13/lanjukang/pkg/utilities"
+	"github.com/julienschmidt/httprouter"
 )
 
 func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
@@ -87,6 +88,24 @@ func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utilities.WriteJson(w, http.StatusOK, newService, "service")
+}
+
+// GetServiceDetail handler for get service detail
+func (m *Repository) GetServiceDetail(w http.ResponseWriter, r *http.Request) {
+	params := httprouter.ParamsFromContext(r.Context())
+	id, err := strconv.Atoi(params.ByName("id"))
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	service, err := m.DB.GetDetailServiceByID(id)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	utilities.WriteJson(w, http.StatusOK, service, "service")
 }
 
 // ListAllService handler for list all service
