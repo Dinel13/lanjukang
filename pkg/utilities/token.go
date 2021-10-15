@@ -14,7 +14,7 @@ type MyClaims struct {
 }
 
 var APPLICATION_NAME = "LankjukangBe"
-var LOGIN_EXPIRATION_DURATION = time.Duration(1) * time.Hour
+var LOGIN_EXPIRATION_DURATION = time.Duration(5) * time.Hour
 var JWT_SIGNING_METHOD = jwt.SigningMethodHS256
 
 func CreateToken(userId int, role int, secretKey string) (string, error) {

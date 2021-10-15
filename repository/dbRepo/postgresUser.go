@@ -126,3 +126,41 @@ func (m *postgresDbRepo) GetUserForOtherUser(id int) (*models.UserDetail, error)
 
 	return &user, nil
 }
+
+// UpdateUserProfile updates user profile and returns updated user
+func (m *postgresDbRepo) UpdateUserProfile(id int, user models.UserUpdateRequset) (*models.UserDetail, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `UPDATE users
+				SET full_name = $1, nick_name = $2, phone = $3, address = $4 
+				WHERE id = $5
+				RETURNING id, full_name, nick_name, email, image, phone, address`
+
+	row := m.DB.QueryRowContext(ctx, stmt,
+		user.FullName,
+		user.NickName,
+		user.Phone,
+		user.Address,
+		id,
+	)
+
+	var userUpdated models.UserDetail
+	err := row.Scan(
+		&userUpdated.Id,
+		&userUpdated.FullName,
+		&userUpdated.NickName,
+		&userUpdated.Email,
+		&userUpdated.Image,
+		&userUpdated.Phone,
+		&userUpdated.Address,
+	)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return &userUpdated, nil
+}

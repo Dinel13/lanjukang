@@ -1,7 +1,6 @@
 package models
 
 import (
-	"database/sql"
 	"time"
 )
 
@@ -64,11 +63,19 @@ type UserResponse struct {
 // UserDetail is for user detail
 // this will use to other user look thi user
 type UserDetail struct {
-	Id       int            `json:"id"`
-	FullName string         `json:"full_name"`
-	NickName string         `json:"nick_name"`
-	Email    string         `json:"email"`
-	Image    sql.NullString `json:"image"`
-	Phone    sql.NullString `json:"phone"`
-	Address  sql.NullString `json:"address"`
+	Id       int     `json:"id"`
+	FullName string  `json:"full_name"`
+	NickName string  `json:"nick_name"`
+	Email    string  `json:"email"`
+	Image    *string `json:"image"`
+	Phone    *string `json:"phone"`
+	Address  *string `json:"address"`
+}
+
+// UserUpdateRequset is for request update user
+type UserUpdateRequset struct {
+	FullName string  `json:"full_name"`
+	NickName string  `json:"nick_name"`
+	Phone    *string `json:"phone"`
+	Address  *string `json:"address"`
 }

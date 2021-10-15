@@ -20,8 +20,9 @@ func routes(app *config.AppConfig) http.Handler {
 	// user
 	r.HandlerFunc(http.MethodPost, "/user/signup", handlers.Repo.SignupHandler)
 	r.HandlerFunc(http.MethodPost, "/user/login", handlers.Repo.LoginHandler)
-	r.HandlerFunc(http.MethodPost, "/user/update-role", handlers.Repo.BecomeAdminHandler)
-	r.HandlerFunc(http.MethodGet, "/user/:id", handlers.Repo.GetUserHandler)
+	r.HandlerFunc(http.MethodPut, "/user/update-role", handlers.Repo.BecomeAdminHandler)
+	r.HandlerFunc(http.MethodPut, "/user/update-profile", handlers.Repo.UpdateUserHandler)
+	r.HandlerFunc(http.MethodGet, "/user/detail/:id", handlers.Repo.GetUserHandler)
 
 	// service
 	r.HandlerFunc(http.MethodPost, "/service/create", handlers.Repo.CreateService)

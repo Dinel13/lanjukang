@@ -179,3 +179,35 @@ func (m *Repository) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	utilities.WriteJson(w, http.StatusOK, user, "user")
 }
+
+// UpdateUserHandler handles the update user request
+func (m *Repository) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
+
+	// Cek if request have valid token
+	userId, _, err := middleware.ChecToken(w, r, m.App.JwtSecret)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+	if userId == 0 {
+		utilities.WriteJsonError(w, errors.New("not alowed"), http.StatusBadRequest)
+		return
+	}
+
+	// decode the request body
+	var update models.UserUpdateRequset
+	err = json.NewDecoder(r.Body).Decode(&update)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	// Update the user
+	user, err := m.DB.UpdateUserProfile(userId, update)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	utilities.WriteJson(w, http.StatusOK, user, "user")
+}
