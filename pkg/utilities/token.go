@@ -14,7 +14,7 @@ type MyClaims struct {
 }
 
 var APPLICATION_NAME = "LankjukangBe"
-var LOGIN_EXPIRATION_DURATION = time.Duration(5) * time.Hour
+var LOGIN_EXPIRATION_DURATION = time.Duration(10) * time.Hour
 var RESET_TOKEN_EXPIRATION_DURATION = time.Duration(10) * time.Minute
 var JWT_SIGNING_METHOD = jwt.SigningMethodHS256
 

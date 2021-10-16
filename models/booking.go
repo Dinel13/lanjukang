@@ -15,20 +15,40 @@ type Booking struct {
 	Service       Service   `json:"service"` // supaya bisa ditampilkan di booking
 }
 
-// BookingRequest untuk mengambil data booking dari request
+// BookingRequest untuk mengambil data booking dari request dan di kirm ke db repo
 type BookingRequest struct {
 	UserId    int       `json:"user_id"`
 	ServiceId int       `json:"service_id"`
 	OwnerId   int       `json:"owner_id"`
+	Amount    int       `json:"amount"`
 	StartAt   time.Time `json:"start_at"`
 	EndAt     time.Time `json:"end_at"`
 }
+
+// BookingRequestFrontend untuk mengambil data booking dari request fronted dan di kirm handler
 type BookingRequestFrontend struct {
 	UserId    int    `json:"user_id"`
 	ServiceId int    `json:"service_id"`
 	OwnerId   int    `json:"owner_id"`
+	Amount    int    `json:"amount"`
 	StartAt   string `json:"start_at"`
 	EndAt     string `json:"end_at"`
+}
+
+// BookingRequestUpdate untuk dikirm ke repo DB
+type BookingRequestUpdate struct {
+	Id      int       `json:"id"`
+	Amount  int       `json:"amount"`
+	StartAt time.Time `json:"start_at"`
+	EndAt   time.Time `json:"end_at"`
+}
+
+// BookingRequestUpdateFrontend untuk mengambil data booking dari request fronted dan di kirm handler
+type BookingRequestUpdateFrontend struct {
+	Id      int    `json:"id"`
+	Amount  int    `json:"amount"`
+	StartAt string `json:"start_at"`
+	EndAt   string `json:"end_at"`
 }
 
 // BookingResponse untuk mengiris data booking ke response
@@ -37,6 +57,7 @@ type BookingResponse struct {
 	UserId    int       `json:"user_id"`
 	ServiceId int       `json:"service_id"`
 	OwnerId   int       `json:"owner_id"`
+	Amount    int       `json:"amount"`
 	StartAt   time.Time `json:"start_at"`
 	EndAt     time.Time `json:"end_at"`
 }

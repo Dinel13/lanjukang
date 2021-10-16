@@ -44,6 +44,7 @@ func (m *Repository) CreateBookingHandler(w http.ResponseWriter, r *http.Request
 		UserId:    userId,
 		ServiceId: BookingRequest.ServiceId,
 		OwnerId:   BookingRequest.OwnerId,
+		Amount:    BookingRequest.Amount,
 		StartAt:   startTime,
 		EndAt:     endTime,
 	}

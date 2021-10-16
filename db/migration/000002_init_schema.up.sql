@@ -4,6 +4,7 @@ CREATE TABLE "bookings" (
   "service_id" INT NOT NULL,
   "owner_id" INT NOT NULL,
   "transaction_id" INT DEFAULT NULL,
+  "amount" INT NOT NULL DEFAULT 1,
   "start_at" timestamptz NOT NULL DEFAULT (now()),
   "end_at" timestamptz NOT NULL DEFAULT (now()),
   "created_at" timestamptz NOT NULL DEFAULT (now()),
