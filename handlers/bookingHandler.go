@@ -106,3 +106,22 @@ func (m *Repository) UpdateBookingHandler(w http.ResponseWriter, r *http.Request
 	utilities.WriteJson(w, http.StatusOK, updatedBooking, "booking")
 
 }
+
+// GetBookingByUserHandler is a handler for getting a booking
+func (m *Repository) GetBookingByUserHandler(w http.ResponseWriter, r *http.Request) {
+
+	// cek token
+	userId, _, err := middleware.ChecToken(r, m.App.JwtSecret)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusUnauthorized)
+		return
+	}
+
+	bookings, err := m.DB.GetAllBookingByUserId(userId)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	utilities.WriteJson(w, http.StatusOK, bookings, "bookings")
+}

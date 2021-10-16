@@ -77,7 +77,7 @@ func (m *postgresDbRepo) UpdateBooking(booking models.BookingRequestUpdate) (*mo
 }
 
 // GetAllBookingSbYUserId returns all bookings of a user
-func (m *postgresDbRepo) GetAllBookingSbYUserId(userId int) ([]models.BookingResponse, error) {
+func (m *postgresDbRepo) GetAllBookingByUserId(userId int) ([]models.BookingResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 	defer cancel()
 
