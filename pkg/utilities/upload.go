@@ -10,7 +10,7 @@ import (
 )
 
 // UploadFile uploads a file to the server
-func UploadedImage(uploadedImage multipart.File, header *multipart.FileHeader) (string, error) {
+func UploadedImage(uploadedImage multipart.File, header *multipart.FileHeader, folder string) (string, error) {
 	dir, err := os.Getwd()
 	if err != nil {
 		return "", err
@@ -23,7 +23,7 @@ func UploadedImage(uploadedImage multipart.File, header *multipart.FileHeader) (
 	}
 
 	filename := fmt.Sprintf("%d%s", time.Now().UnixNano(), filepath.Ext(header.Filename))
-	fileLocation := filepath.Join(dir, "images", filename)
+	fileLocation := filepath.Join(dir, "images", folder, filename)
 	targetFile, err := os.OpenFile(fileLocation, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return "", err
@@ -39,7 +39,10 @@ func UploadedImage(uploadedImage multipart.File, header *multipart.FileHeader) (
 }
 
 // DeleteImage is a function to delete image
-func DeleteImage(filename string) error {
+func DeleteImage(filename string, folder string) error {
+	if filename == "" {
+		return nil
+	}
 	dir, err := os.Getwd()
 	if err != nil {
 		return err
@@ -51,7 +54,7 @@ func DeleteImage(filename string) error {
 		dir = "/var/www/wisata"
 	}
 
-	fileLocation := filepath.Join(dir, "images", filename)
+	fileLocation := filepath.Join(dir, "images", folder, filename)
 	err = os.Remove(fileLocation)
 	if err != nil {
 		return err

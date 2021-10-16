@@ -45,33 +45,39 @@ func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 	priceInt, err := strconv.Atoi(price)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
 	}
 
 	typeInt, err := strconv.Atoi(typeId)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
 	}
 
 	capacityInt, err := strconv.Atoi(capacity)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
 	}
 
 	locationInt, err := strconv.Atoi(location)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
 	}
 
 	// upload image
 	uploadedImage, header, err := r.FormFile("image")
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
 	}
 	defer uploadedImage.Close()
 
-	filename, err := utilities.UploadedImage(uploadedImage, header)
+	filename, err := utilities.UploadedImage(uploadedImage, header, "service")
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
 	}
 
 	service := models.ServiceRequest{
@@ -87,8 +93,9 @@ func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 
 	newService, err := m.DB.CreateService(service)
 	if err != nil {
-		utilities.DeleteImage(filename)
+		utilities.DeleteImage(filename, "service")
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
 	}
 
 	utilities.WriteJson(w, http.StatusOK, newService, "service")
@@ -185,11 +192,13 @@ func (m *Repository) UpdateService(w http.ResponseWriter, r *http.Request) {
 	capacityInt, err := strconv.Atoi(capacity)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
 	}
 
 	locationInt, err := strconv.Atoi(location)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
 	}
 
 	// validate owner of user
@@ -201,12 +210,14 @@ func (m *Repository) UpdateService(w http.ResponseWriter, r *http.Request) {
 	uploadedImage, header, err := r.FormFile("image")
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
 	}
 	defer uploadedImage.Close()
 
-	filename, err := utilities.UploadedImage(uploadedImage, header)
+	filename, err := utilities.UploadedImage(uploadedImage, header, "service")
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
 	}
 
 	service := models.ServiceUpdateRequest{
@@ -221,12 +232,13 @@ func (m *Repository) UpdateService(w http.ResponseWriter, r *http.Request) {
 
 	updatedService, err := m.DB.UpdateService(id, service)
 	if err != nil {
-		utilities.DeleteImage(filename)
+		_ = utilities.DeleteImage(filename, "service")
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
 	}
 
 	// delete old image
-	_ = utilities.DeleteImage(oldImage)
+	_ = utilities.DeleteImage(oldImage, "service")
 
 	utilities.WriteJson(w, http.StatusOK, updatedService, "service")
 }
@@ -277,7 +289,7 @@ func (m *Repository) DeleteService(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = utilities.DeleteImage(service.Image)
+	_ = utilities.DeleteImage(service.Image, "service")
 
 	utilities.WriteJson(w, http.StatusOK, "ok", "service")
 }

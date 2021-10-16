@@ -261,6 +261,63 @@ func (m *Repository) ResetPasswordHandler(w http.ResponseWriter, r *http.Request
 	utilities.WriteJson(w, http.StatusOK, userResponse, "user")
 }
 
+// UpdateUserImageHandler handles the update user info request
+func (m *Repository) UpdateUserImageHandler(w http.ResponseWriter, r *http.Request) {
+	// get user id from token
+	id, _, err := middleware.ChecToken(r, m.App.JwtSecret)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	// get user info from database
+	user, err := m.DB.GetUserForUpdateImage(id)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	// get data from request
+	if err := r.ParseMultipartForm(1024); err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	uploadedImage, header, err := r.FormFile("image")
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+	}
+	defer uploadedImage.Close()
+
+	if uploadedImage == nil {
+		utilities.WriteJsonError(w, errors.New("please provide image"), http.StatusBadRequest)
+		return
+	}
+
+	filename, err := utilities.UploadedImage(uploadedImage, header, "user")
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+	}
+
+	// update user info
+	updatedUser, err := m.DB.UpdateUserImage(id, filename)
+
+	if err != nil {
+		utilities.DeleteImage(filename, "user")
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	// delete old image if exist
+	if user.Image != nil {
+		oldImage := *user.Image // convert to string
+		_ = utilities.DeleteImage(oldImage, "user")
+	}
+
+	utilities.WriteJson(w, http.StatusOK, updatedUser, "user")
+
+}
+
 // BecomeAdminHandler handles the become admin request
 func (m *Repository) BecomeAdminHandler(w http.ResponseWriter, r *http.Request) {
 	// cek if request have valid token

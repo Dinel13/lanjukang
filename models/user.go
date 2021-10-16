@@ -91,3 +91,14 @@ type UserForResetPassword struct {
 	Id       int    `json:"id"`
 	Password string `json:"password"`
 }
+
+// UserUpdateImage is for update user image
+type UserUpdateImage struct {
+	Image *string `json:"image"`
+}
+
+// // UserForGetUpdateImage is for user for reset password
+// type UserForUpdateImage struct {
+// 	Id    int     `json:"id"`
+// 	Image *string `json:"image"`
+// }

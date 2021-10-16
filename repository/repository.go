@@ -13,6 +13,8 @@ type DatabaseRepo interface {
 	UpdateUserRole(int) error
 	GetUserForOtherUser(int) (*models.UserDetail, error)
 	UpdateUserProfile(int, models.UserUpdateRequset) (*models.UserDetail, error) // not include password and image
+	UpdateUserImage(int, string) (*models.UserUpdateImage, error)
+	GetUserForUpdateImage(int) (*models.UserUpdateImage, error)
 
 	// Service
 	CreateService(models.ServiceRequest) (*models.ServicePostCreate, error)

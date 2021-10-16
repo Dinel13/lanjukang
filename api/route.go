@@ -25,6 +25,7 @@ func routes(app *config.AppConfig) http.Handler {
 	r.HandlerFunc(http.MethodGet, "/user/detail/:id", handlers.Repo.GetUserHandler)
 	r.HandlerFunc(http.MethodPost, "/user/forgot-password", handlers.Repo.ForgetPasswordHandler)
 	r.HandlerFunc(http.MethodPost, "/user/reset-password", handlers.Repo.ResetPasswordHandler)
+	r.HandlerFunc(http.MethodPut, "/user/image", handlers.Repo.UpdateUserImageHandler)
 
 	// service
 	r.HandlerFunc(http.MethodPost, "/service/create", handlers.Repo.CreateService)

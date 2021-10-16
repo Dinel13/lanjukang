@@ -42,6 +42,165 @@ func (m *postgresDbRepo) CreateUser(res models.UserSignUp) (*models.UserPostSign
 
 }
 
+// Start for all UPDATE USER
+//
+//
+// UpdateUserPasword updates user password
+func (m *postgresDbRepo) UpdateUserPasword(id int, password string) (*models.UserPostLogin, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `UPDATE users SET password = $1 WHERE id = $2 RETURNING id, role, nick_name`
+
+	row := m.DB.QueryRowContext(ctx, stmt, password, id)
+
+	var user models.UserPostLogin
+	err := row.Scan(
+		&user.Id,
+		&user.Role,
+		&user.NickName,
+	)
+	if err == sql.ErrNoRows {
+		return nil, errors.New("user not found")
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+// BecomeAdmin changes user role to admin
+func (m *postgresDbRepo) UpdateUserRole(id int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `UPDATE users SET role = $1 WHERE id = $2`
+	_, err := m.DB.ExecContext(ctx, stmt, 1, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdateUserProfile updates user profile and returns updated user
+func (m *postgresDbRepo) UpdateUserProfile(id int, user models.UserUpdateRequset) (*models.UserDetail, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `UPDATE users
+				SET full_name = $1, nick_name = $2, phone = $3, address = $4 
+				WHERE id = $5
+				RETURNING id, full_name, nick_name, email, image, phone, address`
+
+	row := m.DB.QueryRowContext(ctx, stmt,
+		user.FullName,
+		user.NickName,
+		user.Phone,
+		user.Address,
+		id,
+	)
+
+	var userUpdated models.UserDetail
+	err := row.Scan(
+		&userUpdated.Id,
+		&userUpdated.FullName,
+		&userUpdated.NickName,
+		&userUpdated.Email,
+		&userUpdated.Image,
+		&userUpdated.Phone,
+		&userUpdated.Address,
+	)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return &userUpdated, nil
+}
+
+// UpdateUserImage updates user image
+func (m *postgresDbRepo) UpdateUserImage(id int, image string) (*models.UserUpdateImage, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `UPDATE users SET image = $1 WHERE id = $2 RETURNING image`
+
+	row := m.DB.QueryRowContext(ctx, stmt, image, id)
+
+	var user models.UserUpdateImage
+	err := row.Scan(
+		&user.Image,
+	)
+
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+// Start for all GET USER
+//
+//
+// GetUserForUpdateImage returns user info for update image
+
+func (m *postgresDbRepo) GetUserForUpdateImage(id int) (*models.UserUpdateImage, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `SELECT image FROM users WHERE id = $1`
+	row := m.DB.QueryRowContext(ctx, stmt, id)
+
+	var user models.UserUpdateImage
+	err := row.Scan(
+		&user.Image,
+	)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+// GetUserForOtherUser returns a user info for other user
+func (m *postgresDbRepo) GetUserForOtherUser(id int) (*models.UserDetail, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `SELECT id, full_name, nick_name, email, image, phone, address FROM users WHERE id = $1`
+	row := m.DB.QueryRowContext(ctx, stmt, id)
+
+	var user models.UserDetail
+	err := row.Scan(
+		&user.Id,
+		&user.FullName,
+		&user.NickName,
+		&user.Email,
+		&user.Image,
+		&user.Phone,
+		&user.Address,
+	)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
 // GetUserByEmail returns a user by email
 func (m *postgresDbRepo) GetUserByEmail(email string) (*models.UserPostLogin, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -108,109 +267,4 @@ func (m *postgresDbRepo) GetUserForResetPassword(id int) (*models.UserForResetPa
 	}
 
 	return &user, nil
-}
-
-// UpdateUserPasword updates user password
-func (m *postgresDbRepo) UpdateUserPasword(id int, password string) (*models.UserPostLogin, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
-	stmt := `UPDATE users SET password = $1 WHERE id = $2 RETURNING id, role, nick_name`
-
-	row := m.DB.QueryRowContext(ctx, stmt, password, id)
-
-	var user models.UserPostLogin
-	err := row.Scan(
-		&user.Id,
-		&user.Role,
-		&user.NickName,
-	)
-	if err == sql.ErrNoRows {
-		return nil, errors.New("user not found")
-	}
-	if err != nil {
-		return nil, err
-	}
-
-	return &user, nil
-}
-
-// BecomeAdmin changes user role to admin
-func (m *postgresDbRepo) UpdateUserRole(id int) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
-	stmt := `UPDATE users SET role = $1 WHERE id = $2`
-	_, err := m.DB.ExecContext(ctx, stmt, 1, id)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// GetUserForOtherUser returns a user info for other user
-func (m *postgresDbRepo) GetUserForOtherUser(id int) (*models.UserDetail, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
-	stmt := `SELECT id, full_name, nick_name, email, image, phone, address FROM users WHERE id = $1`
-	row := m.DB.QueryRowContext(ctx, stmt, id)
-
-	var user models.UserDetail
-	err := row.Scan(
-		&user.Id,
-		&user.FullName,
-		&user.NickName,
-		&user.Email,
-		&user.Image,
-		&user.Phone,
-		&user.Address,
-	)
-	if err == sql.ErrNoRows {
-		return nil, nil
-	}
-	if err != nil {
-		return nil, err
-	}
-
-	return &user, nil
-}
-
-// UpdateUserProfile updates user profile and returns updated user
-func (m *postgresDbRepo) UpdateUserProfile(id int, user models.UserUpdateRequset) (*models.UserDetail, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
-	stmt := `UPDATE users
-				SET full_name = $1, nick_name = $2, phone = $3, address = $4 
-				WHERE id = $5
-				RETURNING id, full_name, nick_name, email, image, phone, address`
-
-	row := m.DB.QueryRowContext(ctx, stmt,
-		user.FullName,
-		user.NickName,
-		user.Phone,
-		user.Address,
-		id,
-	)
-
-	var userUpdated models.UserDetail
-	err := row.Scan(
-		&userUpdated.Id,
-		&userUpdated.FullName,
-		&userUpdated.NickName,
-		&userUpdated.Email,
-		&userUpdated.Image,
-		&userUpdated.Phone,
-		&userUpdated.Address,
-	)
-	if err == sql.ErrNoRows {
-		return nil, nil
-	}
-	if err != nil {
-		return nil, err
-	}
-
-	return &userUpdated, nil
 }

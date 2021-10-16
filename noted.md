@@ -34,4 +34,6 @@ pastikan image terhapus jika delete
 
 Lanjukang@21
 
+jadikan fungsi uploda file go routine
 
+cek apakah updated db ada efek dan tidak null
