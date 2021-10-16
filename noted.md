@@ -13,6 +13,10 @@ token tidak mau diparse karena interface{}
 claims["id"].(float64) untuk ubahh interfcae{} menjadi float64
 lalu ubah float64 menjadi int dengna int(claims["id"].(float64)) 
 
+untuk handle data yang bisa null dapat pake
+ - sql.NUll sting tapi ini susah di unmarshal
+ - *string ini leih muda
+
 
 todo
 
@@ -27,3 +31,7 @@ bagaimana caranya mereturn map dan comment
 pastiakn image terhapus jika gagal create services
 pastikan image terhapus jika update
 pastikan image terhapus jika delete
+
+Lanjukang@21
+
+
