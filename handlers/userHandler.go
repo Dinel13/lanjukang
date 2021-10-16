@@ -128,6 +128,57 @@ func (m *Repository) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// ForgetPasswordHandler handles the forget password request
+func (m *Repository) ForgetPasswordHandler(w http.ResponseWriter, r *http.Request) {
+	var user models.UserByEmail
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	// Validate the user data
+	if user.Email == "" {
+		utilities.WriteJsonError(w, errors.New("please provide an email"), http.StatusBadRequest)
+		return
+	}
+
+	// check if the user already exists
+	existUser, err := m.DB.GetUserByEmail(user.Email)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+	if existUser == nil {
+		utilities.WriteJsonError(w, errors.New("user bot found"), http.StatusBadRequest)
+		return
+	}
+
+	// generate reset password token
+	token, err := utilities.CreateResePasswordToken(existUser.Id, m.App.JwtSecret)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	// send link to reset password via email
+	to := []string{user.Email}
+	subject := "Reset Password"
+	body := "Click the link to reset your password: " + m.App.Frontend + "/reset-password/" + token
+
+	// make chanel as receiver for sending email
+	mailEror := make(chan error)
+	go func() {
+		mailEror <- utilities.SendMail(to, subject, body)
+	}()
+	err = <-mailEror
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+}
+
 // BecomeAdminHandler handles the become admin request
 func (m *Repository) BecomeAdminHandler(w http.ResponseWriter, r *http.Request) {
 	// cek if request have valid token

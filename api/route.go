@@ -23,6 +23,7 @@ func routes(app *config.AppConfig) http.Handler {
 	r.HandlerFunc(http.MethodPut, "/user/update-role", handlers.Repo.BecomeAdminHandler)
 	r.HandlerFunc(http.MethodPut, "/user/update-profile", handlers.Repo.UpdateUserHandler)
 	r.HandlerFunc(http.MethodGet, "/user/detail/:id", handlers.Repo.GetUserHandler)
+	r.HandlerFunc(http.MethodPost, "/user/forgot-password", handlers.Repo.ForgetPasswordHandler)
 
 	// service
 	r.HandlerFunc(http.MethodPost, "/service/create", handlers.Repo.CreateService)

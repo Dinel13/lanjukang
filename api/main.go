@@ -8,7 +8,6 @@ import (
 	"github.com/dinel13/lanjukang/config"
 	"github.com/dinel13/lanjukang/db/driver"
 	"github.com/dinel13/lanjukang/handlers"
-	"github.com/dinel13/lanjukang/pkg/utilities"
 )
 
 const portNumber = ":8080"
@@ -20,6 +19,7 @@ func main() {
 	app.AppName = "Lanjukang"
 	app.AppVersion = "1.0.0"
 	app.JwtSecret = "secret"
+	app.Frontend = "http://localhost:3000"
 
 	db, err := run()
 	if err != nil {
@@ -32,21 +32,6 @@ func main() {
 	srv := &http.Server{
 		Addr:    ":8080",
 		Handler: routes(&app),
-	}
-
-	// send mail
-	to := []string{"andirunawa13@gmail.com", "baharuddinbutdam@gmail.com"}
-	subject := "Test email"
-	body := "This is a test email"
-
-	// make chanel as receiver for sending email
-	mailEror := make(chan error)
-	go func() {
-		mailEror <- utilities.SendMail(to, subject, body)
-	}()
-	errMail := <-mailEror
-	if errMail != nil {
-		log.Fatal(errMail)
 	}
 
 	err = srv.ListenAndServe()

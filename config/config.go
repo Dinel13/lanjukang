@@ -5,4 +5,5 @@ type AppConfig struct {
 	AppName    string
 	AppVersion string
 	JwtSecret  string
+	Frontend   string
 }
