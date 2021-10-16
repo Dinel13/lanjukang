@@ -25,4 +25,7 @@ type DatabaseRepo interface {
 	ListAllServicesByType(typeId int, limit int) ([]models.ServiceResponse, error)
 	ListAllServicesByLocation(locationId int, limit int) ([]models.ServiceResponse, error)
 	GetSortDetailServiceByID(int) (*models.ServiceSortDetailResponse, error)
+
+	// Booking
+	CreateBooking(models.BookingRequest) (*models.BookingResponse, error)
 }

@@ -37,3 +37,8 @@ Lanjukang@21
 jadikan fungsi uploda file go routine
 
 cek apakah updated db ada efek dan tidak null
+
+Lama sekali urus time data
+- request dari front end harus sting jadi harus pake struk kusus
+- lalu string harus di ubah ke time.Time
+
