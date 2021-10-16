@@ -38,6 +38,7 @@ type BookingRequestFrontend struct {
 // BookingRequestUpdate untuk dikirm ke repo DB
 type BookingRequestUpdate struct {
 	Id      int       `json:"id"`
+	UserId  int       `json:"user_id"`
 	Amount  int       `json:"amount"`
 	StartAt time.Time `json:"start_at"`
 	EndAt   time.Time `json:"end_at"`

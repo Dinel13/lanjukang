@@ -48,7 +48,7 @@ func (m *postgresDbRepo) UpdateBooking(booking models.BookingRequestUpdate) (*mo
 	defer cancel()
 
 	stmt := `UPDATE bookings SET amount = $1, start_at = $2, end_at = $3 
-				WHERE id = $4 
+				WHERE id = $4 AND user_id = $5
 				RETURNING id, user_id, service_id, owner_id, amount, start_at, end_at`
 
 	row := m.DB.QueryRowContext(ctx, stmt,
@@ -56,6 +56,7 @@ func (m *postgresDbRepo) UpdateBooking(booking models.BookingRequestUpdate) (*mo
 		booking.StartAt,
 		booking.EndAt,
 		booking.Id,
+		booking.UserId,
 	)
 
 	var bookingResponse models.BookingResponse

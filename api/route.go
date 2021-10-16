@@ -36,6 +36,7 @@ func routes(app *config.AppConfig) http.Handler {
 
 	// Booking
 	r.HandlerFunc(http.MethodPost, "/booking/create", handlers.Repo.CreateBookingHandler)
+	r.HandlerFunc(http.MethodPut, "/booking/update", handlers.Repo.UpdateBookingHandler)
 
 	return middleware.EnableCors(r)
 }
