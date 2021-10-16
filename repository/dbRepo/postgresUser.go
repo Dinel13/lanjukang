@@ -3,11 +3,13 @@ package dbrepo
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 
 	"github.com/dinel13/lanjukang/models"
 )
 
+// CReateUser creates a new user
 func (m *postgresDbRepo) CreateUser(res models.UserSignUp) (*models.UserPostSignUp, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -77,6 +79,54 @@ func (m *postgresDbRepo) GetUserByID(id int) (*models.UserById, error) {
 	err := row.Scan(&user.Id)
 	if err == sql.ErrNoRows {
 		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+// GetUserForResetPassword returns a user for reset password
+func (m *postgresDbRepo) GetUserForResetPassword(id int) (*models.UserForResetPassword, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `SELECT id, password FROM users WHERE id = $1`
+	row := m.DB.QueryRowContext(ctx, stmt, id)
+
+	var user models.UserForResetPassword
+	err := row.Scan(
+		&user.Id,
+		&user.Password,
+	)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+// UpdateUserPasword updates user password
+func (m *postgresDbRepo) UpdateUserPasword(id int, password string) (*models.UserPostLogin, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `UPDATE users SET password = $1 WHERE id = $2 RETURNING id, role, nick_name`
+
+	row := m.DB.QueryRowContext(ctx, stmt, password, id)
+
+	var user models.UserPostLogin
+	err := row.Scan(
+		&user.Id,
+		&user.Role,
+		&user.NickName,
+	)
+	if err == sql.ErrNoRows {
+		return nil, errors.New("user not found")
 	}
 	if err != nil {
 		return nil, err

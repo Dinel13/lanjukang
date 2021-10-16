@@ -177,12 +177,94 @@ func (m *Repository) ForgetPasswordHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	utilities.WriteJson(w, http.StatusOK, "send link reset to your email", "user")
+
+}
+
+// ResetPasswordHandler handles the reset password request
+func (m *Repository) ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
+	var user models.UserResetPasswordRequest
+
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	// Validate the user data
+	if user.Password == "" {
+		utilities.WriteJsonError(w, errors.New("please provide password"), http.StatusBadRequest)
+		return
+	}
+	if user.PasswordConfirm == "" {
+		utilities.WriteJsonError(w, errors.New("please provide confirm password"), http.StatusBadRequest)
+		return
+	}
+	if user.Password != user.PasswordConfirm {
+		utilities.WriteJsonError(w, errors.New("password and confirm password not match"), http.StatusBadRequest)
+		return
+	}
+
+	// cek if request have valid token
+	id, err := middleware.CheckResetPasswordToken(r, m.App.JwtSecret)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	// check if the user already exists
+	// return
+	existUser, err := m.DB.GetUserForResetPassword(id)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+	if existUser == nil {
+		utilities.WriteJsonError(w, errors.New("user bot found"), http.StatusBadRequest)
+		return
+	}
+
+	// check if old password not match with new password
+	err = bcrypt.CompareHashAndPassword([]byte(existUser.Password), []byte(user.Password))
+	if err == nil {
+		utilities.WriteJsonError(w, errors.New("old password stil match with new password"), http.StatusBadRequest)
+		return
+	}
+
+	// hash the password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	// update user password
+	existUser.Password = string(hashedPassword)
+	updatedUser, err := m.DB.UpdateUserPasword(existUser.Id, existUser.Password)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	// generate new token
+	token, err := utilities.CreateToken(updatedUser.Id, updatedUser.Role, m.App.JwtSecret)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	userResponse := models.UserResponse{
+		Token: token,
+		Name:  updatedUser.NickName,
+	}
+
+	utilities.WriteJson(w, http.StatusOK, userResponse, "user")
 }
 
 // BecomeAdminHandler handles the become admin request
 func (m *Repository) BecomeAdminHandler(w http.ResponseWriter, r *http.Request) {
 	// cek if request have valid token
-	id, role, err := middleware.ChecToken(w, r, m.App.JwtSecret)
+	id, role, err := middleware.ChecToken(r, m.App.JwtSecret)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
 		return
@@ -235,7 +317,7 @@ func (m *Repository) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Cek if request have valid token
-	userId, _, err := middleware.ChecToken(w, r, m.App.JwtSecret)
+	userId, _, err := middleware.ChecToken(r, m.App.JwtSecret)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
 		return

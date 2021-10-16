@@ -8,6 +8,8 @@ type DatabaseRepo interface {
 	CreateUser(models.UserSignUp) (*models.UserPostSignUp, error)
 	GetUserByEmail(string) (*models.UserPostLogin, error)
 	GetUserByID(int) (*models.UserById, error)
+	GetUserForResetPassword(int) (*models.UserForResetPassword, error)
+	UpdateUserPasword(int, string) (*models.UserPostLogin, error)
 	UpdateUserRole(int) error
 	GetUserForOtherUser(int) (*models.UserDetail, error)
 	UpdateUserProfile(int, models.UserUpdateRequset) (*models.UserDetail, error) // not include password and image

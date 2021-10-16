@@ -15,7 +15,7 @@ import (
 func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 
 	// cek if request have valid token
-	id, role, err := middleware.ChecToken(w, r, m.App.JwtSecret)
+	id, role, err := middleware.ChecToken(r, m.App.JwtSecret)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
 		return
@@ -135,7 +135,7 @@ func (m *Repository) UpdateService(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// cek if request have valid token
-	idUser, role, err := middleware.ChecToken(w, r, m.App.JwtSecret)
+	idUser, role, err := middleware.ChecToken(r, m.App.JwtSecret)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
 		return
@@ -242,7 +242,7 @@ func (m *Repository) DeleteService(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// cek if request have valid token
-	idUser, role, err := middleware.ChecToken(w, r, m.App.JwtSecret)
+	idUser, role, err := middleware.ChecToken(r, m.App.JwtSecret)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
 		return

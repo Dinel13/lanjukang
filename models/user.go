@@ -79,3 +79,15 @@ type UserUpdateRequset struct {
 	Phone    *string `json:"phone"`
 	Address  *string `json:"address"`
 }
+
+// UserResetPasswordRequerst is for request reset password
+type UserResetPasswordRequest struct {
+	Password        string `json:"password"`
+	PasswordConfirm string `json:"password_confirm"`
+}
+
+// UserForResetPassword is for user for reset password
+type UserForResetPassword struct {
+	Id       int    `json:"id"`
+	Password string `json:"password"`
+}

@@ -23,7 +23,8 @@ func EnableCors(next http.Handler) http.Handler {
 	})
 }
 
-func ChecToken(w http.ResponseWriter, r *http.Request, jwtSecret string) (int, int, error) {
+// Checktoken check token for auth
+func ChecToken(r *http.Request, jwtSecret string) (int, int, error) {
 	authorizationHeader := r.Header.Get("Authorization")
 	if !strings.Contains(authorizationHeader, "Bearer") {
 		return 0, 0, errors.New("invalid token")
@@ -40,4 +41,24 @@ func ChecToken(w http.ResponseWriter, r *http.Request, jwtSecret string) (int, i
 	}
 
 	return id, role, nil
+}
+
+// CheckResetPasswordToken check token for reset password
+func CheckResetPasswordToken(r *http.Request, jwtSecret string) (int, error) {
+	authorizationHeader := r.Header.Get("Authorization")
+	if !strings.Contains(authorizationHeader, "Bearer") {
+		return 0, errors.New("invalid token")
+	}
+	tokenString := strings.Replace(authorizationHeader, "Bearer ", "", -1)
+	id, err := utilities.ParseResetPasswordToken(tokenString, jwtSecret)
+	if err != nil {
+		return 0, err
+
+	}
+	if id == 0 {
+		return 0, errors.New("invalid token")
+
+	}
+
+	return id, nil
 }
