@@ -29,6 +29,6 @@ type DatabaseRepo interface {
 	// Booking
 	CreateBooking(models.BookingRequest) (*models.BookingResponse, error)
 	UpdateBooking(models.BookingRequestUpdate) (*models.BookingResponse, error)
-	DeleteBooking(int) error
+	DeleteBooking(int, int) error
 	GetAllBookingByUserId(int) ([]models.BookingResponse, error)
 }

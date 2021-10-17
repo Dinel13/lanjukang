@@ -111,13 +111,13 @@ func (m *postgresDbRepo) GetAllBookingByUserId(userId int) ([]models.BookingResp
 }
 
 // DEleteBooking deletes a booking from the database
-func (m *postgresDbRepo) DeleteBooking(bookingId int) error {
+func (m *postgresDbRepo) DeleteBooking(bookingId int, userId int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 	defer cancel()
 
-	stmt := `DELETE FROM bookings WHERE id = $1`
+	stmt := `DELETE FROM bookings WHERE id = $1 AND user_id = $2`
 
-	_, err := m.DB.ExecContext(ctx, stmt, bookingId)
+	_, err := m.DB.ExecContext(ctx, stmt, bookingId, userId)
 	if err != nil {
 		return err
 	}

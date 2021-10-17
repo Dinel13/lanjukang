@@ -52,6 +52,11 @@ type BookingRequestUpdateFrontend struct {
 	EndAt   string `json:"end_at"`
 }
 
+// BookingRequestDeleteFrontend for delete
+type BookingRequestDeleteFrontend struct {
+	Id int `json:"id"`
+}
+
 // BookingResponse untuk mengiris data booking ke response
 type BookingResponse struct {
 	Id        int       `json:"id"`

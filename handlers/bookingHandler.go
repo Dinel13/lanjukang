@@ -3,11 +3,13 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/dinel13/lanjukang/middleware"
 	"github.com/dinel13/lanjukang/models"
 	"github.com/dinel13/lanjukang/pkg/utilities"
+	"github.com/julienschmidt/httprouter"
 )
 
 // CreateBookingHandler is a handler for creating a booking
@@ -124,4 +126,31 @@ func (m *Repository) GetBookingByUserHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	utilities.WriteJson(w, http.StatusOK, bookings, "bookings")
+}
+
+// DeleteBookingHandler is a handler for deleting a booking
+func (m *Repository) DeleteBookingHandler(w http.ResponseWriter, r *http.Request) {
+
+	// cek token
+	userId, _, err := middleware.ChecToken(r, m.App.JwtSecret)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusUnauthorized)
+		return
+	}
+
+	// get  booking id from request
+	params := httprouter.ParamsFromContext(r.Context())
+	bookingId, err := strconv.Atoi(params.ByName("id"))
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	err = m.DB.DeleteBooking(bookingId, userId)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	utilities.WriteJson(w, http.StatusOK, "booking deleted", "booking")
 }
