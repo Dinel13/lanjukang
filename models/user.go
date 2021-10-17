@@ -55,7 +55,9 @@ type UserById struct {
 	Id int `json:"id"`
 }
 
+// UserRespon for respon to frontend
 type UserResponse struct {
+	Id    int    `json:"id"`
 	Token string `json:"token"`
 	Name  string `json:"name"`
 }

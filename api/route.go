@@ -17,6 +17,9 @@ func routes(app *config.AppConfig) http.Handler {
 
 	r.HandlerFunc(http.MethodGet, "/", handlers.Repo.Home)
 
+	// route for static file
+	r.ServeFiles("/images/*filepath", http.Dir("images"))
+
 	// user
 	r.HandlerFunc(http.MethodPost, "/user/signup", handlers.Repo.SignupHandler)
 	r.HandlerFunc(http.MethodPost, "/user/login", handlers.Repo.LoginHandler)

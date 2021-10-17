@@ -70,6 +70,7 @@ func (m *Repository) SignupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userResponse := models.UserResponse{
+		Id:    newUser.Id,
 		Token: token,
 		Name:  newUser.NickName,
 	}
@@ -121,6 +122,7 @@ func (m *Repository) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userResponse := models.UserResponse{
+		Id:    existUser.Id,
 		Token: token,
 		Name:  existUser.NickName,
 	}
