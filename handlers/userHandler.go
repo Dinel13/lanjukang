@@ -73,6 +73,7 @@ func (m *Repository) SignupHandler(w http.ResponseWriter, r *http.Request) {
 		Id:    newUser.Id,
 		Token: token,
 		Name:  newUser.NickName,
+		Role:  newUser.Role,
 	}
 	utilities.WriteJson(w, http.StatusOK, userResponse, "user")
 }
@@ -125,6 +126,7 @@ func (m *Repository) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Id:    existUser.Id,
 		Token: token,
 		Name:  existUser.NickName,
+		Role:  existUser.Role,
 	}
 	utilities.WriteJson(w, http.StatusOK, userResponse, "user")
 
@@ -257,7 +259,9 @@ func (m *Repository) ResetPasswordHandler(w http.ResponseWriter, r *http.Request
 
 	userResponse := models.UserResponse{
 		Token: token,
+		Id:    updatedUser.Id,
 		Name:  updatedUser.NickName,
+		Role:  updatedUser.Role,
 	}
 
 	utilities.WriteJson(w, http.StatusOK, userResponse, "user")
@@ -336,19 +340,26 @@ func (m *Repository) BecomeAdminHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	// update the user to become an admin
-	err = m.DB.UpdateUserRole(id)
+	newUser, err := m.DB.UpdateUserRole(id)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
 		return
 	}
 
-	token, err := utilities.CreateToken(id, 1, m.App.JwtSecret)
+	token, err := utilities.CreateToken(newUser.Id, newUser.Role, m.App.JwtSecret)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
 		return
 	}
 
-	utilities.WriteJson(w, http.StatusOK, token, "newToken")
+	userResponse := models.UserResponse{
+		Token: token,
+		Id:    newUser.Id,
+		Name:  newUser.NickName,
+		Role:  newUser.Role,
+	}
+
+	utilities.WriteJson(w, http.StatusOK, userResponse, "user")
 
 }
 

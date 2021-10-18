@@ -71,17 +71,28 @@ func (m *postgresDbRepo) UpdateUserPasword(id int, password string) (*models.Use
 }
 
 // BecomeAdmin changes user role to admin
-func (m *postgresDbRepo) UpdateUserRole(id int) error {
+func (m *postgresDbRepo) UpdateUserRole(id int) (*models.UserPostLogin, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	stmt := `UPDATE users SET role = $1 WHERE id = $2`
-	_, err := m.DB.ExecContext(ctx, stmt, 1, id)
+	stmt := `UPDATE users SET role = $1 WHERE id = $2 RETURNING id, role, nick_name`
+
+	row := m.DB.QueryRowContext(ctx, stmt, 1, id)
+
+	var user models.UserPostLogin
+	err := row.Scan(
+		&user.Id,
+		&user.Role,
+		&user.NickName,
+	)
+	if err == sql.ErrNoRows {
+		return nil, errors.New("user not found")
+	}
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return &user, nil
 }
 
 // UpdateUserProfile updates user profile and returns updated user

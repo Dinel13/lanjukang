@@ -60,6 +60,7 @@ type UserResponse struct {
 	Id    int    `json:"id"`
 	Token string `json:"token"`
 	Name  string `json:"name"`
+	Role  int    `json:"role"`
 }
 
 // UserDetail is for user detail
