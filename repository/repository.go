@@ -22,6 +22,7 @@ type DatabaseRepo interface {
 	DeleteService(int) error
 	GetDetailServiceByID(id int) (*models.ServiceDetailResponse, error)
 	ListAllServices(limit int) ([]models.ServiceResponse, error)
+	ListPopularServices(limit int) ([]models.ServiceResponse, error)
 	ListAllServicesByType(typeId int, limit int) ([]models.ServiceResponse, error)
 	ListAllServicesByLocation(locationId int, limit int) ([]models.ServiceResponse, error)
 	GetSortDetailServiceByID(int) (*models.ServiceSortDetailResponse, error)

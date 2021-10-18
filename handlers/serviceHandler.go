@@ -32,9 +32,9 @@ func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 
 	name := r.FormValue("name")
 	price := r.FormValue("price")
-	typeId := r.FormValue("type")
+	typeId := r.FormValue("type_id")
 	capacity := r.FormValue("capacity")
-	location := r.FormValue("location")
+	location := r.FormValue("location_id")
 	description := r.FormValue("description")
 
 	// validate
@@ -292,4 +292,15 @@ func (m *Repository) DeleteService(w http.ResponseWriter, r *http.Request) {
 	_ = utilities.DeleteImage(service.Image, "service")
 
 	utilities.WriteJson(w, http.StatusOK, "ok", "service")
+}
+
+// ListPopService handler for list service
+func (m *Repository) ListPopService(w http.ResponseWriter, r *http.Request) {
+	services, err := m.DB.ListPopularServices(2)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	utilities.WriteJson(w, http.StatusOK, services, "services")
 }
