@@ -25,7 +25,7 @@ func (m *postgresDbRepo) CreateService(service models.ServiceRequest) (*models.S
 		service.OwnerId,
 		service.TypeId,
 		service.Capacity,
-		service.LocationId,
+		service.Location,
 		service.Description,
 	)
 
@@ -38,7 +38,7 @@ func (m *postgresDbRepo) CreateService(service models.ServiceRequest) (*models.S
 		&newServices.Image,
 		&newServices.TypeId,
 		&newServices.Capacity,
-		&newServices.LocationId,
+		&newServices.Location,
 		&newServices.Description,
 	)
 
@@ -54,11 +54,10 @@ func (m *postgresDbRepo) GetDetailServiceByID(id int) (*models.ServiceDetailResp
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	stmt := `SELECT s.id, s.name, s.price, s.image, s.capacity, s.description, u.nick_name, u.id, t.name,  l.name
+	stmt := `SELECT s.id, s.name, s.price, s.image, s.capacity, s.location, s.description, u.nick_name, u.id, t.name
 				FROM services s
 				JOIN users u ON s.owner_id = u.id
 				JOIN type_services t ON s.type_id = t.id
-				JOIN locations l ON s.location = l.id
 				WHERE s.id = $1`
 
 	row := m.DB.QueryRowContext(ctx, stmt, id)
@@ -71,12 +70,11 @@ func (m *postgresDbRepo) GetDetailServiceByID(id int) (*models.ServiceDetailResp
 		&service.Price,
 		&service.Image,
 		&service.Capacity,
+		&service.Location,
 		&service.Description,
-		// &service.Comments,
 		&service.Owner,
 		&service.OwnerId,
 		&service.Type,
-		&service.Location,
 	)
 
 	if err != nil {
@@ -122,7 +120,7 @@ func (m *postgresDbRepo) UpdateService(id int, service models.ServiceUpdateReque
 		service.Image,
 		service.TypeId,
 		service.Capacity,
-		service.LocationId,
+		service.Location,
 		service.Description,
 		id,
 	)
@@ -136,7 +134,7 @@ func (m *postgresDbRepo) UpdateService(id int, service models.ServiceUpdateReque
 		&newServices.Image,
 		&newServices.TypeId,
 		&newServices.Capacity,
-		&newServices.LocationId,
+		&newServices.Location,
 		&newServices.Description,
 	)
 
@@ -305,9 +303,8 @@ func (m *postgresDbRepo) ListPopularServices(limit int) ([]models.ServiceRespons
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	stmt := `SELECT s.id, s.name, s.price, s.image, s.capacity, u.nick_name, u.id, t.name,  l.name
+	stmt := `SELECT s.id, s.name, s.price, s.image, s.capacity, s.location, u.nick_name, u.id, t.name
 				FROM services s
-				LEFT JOIN locations l ON s.location = l.id
 				LEFT JOIN type_services t ON s.type_id = t.id
 				LEFT JOIN users u ON s.owner_id = u.id
 				ORDER BY s.rating DESC
@@ -330,10 +327,10 @@ func (m *postgresDbRepo) ListPopularServices(limit int) ([]models.ServiceRespons
 			&service.Price,
 			&service.Image,
 			&service.Capacity,
+			&service.Location,
 			&service.Owner,
 			&service.OwnerId,
 			&service.Type,
-			&service.Location,
 		)
 
 		if err != nil {

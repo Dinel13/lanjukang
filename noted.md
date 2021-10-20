@@ -42,3 +42,6 @@ Lama sekali urus time data
 - request dari front end harus sting jadi harus pake struk kusus
 - lalu string harus di ubah ke time.Time
 
+perbaiki retun error ke frontedn
+
+update relasi databse - hapus fk dari locasi

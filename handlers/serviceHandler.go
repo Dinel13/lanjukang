@@ -34,7 +34,7 @@ func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 	price := r.FormValue("price")
 	typeId := r.FormValue("type_id")
 	capacity := r.FormValue("capacity")
-	location := r.FormValue("location_id")
+	location := r.FormValue("location")
 	description := r.FormValue("description")
 
 	// validate
@@ -55,12 +55,6 @@ func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 	}
 
 	capacityInt, err := strconv.Atoi(capacity)
-	if err != nil {
-		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
-		return
-	}
-
-	locationInt, err := strconv.Atoi(location)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
 		return
@@ -87,7 +81,7 @@ func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 		OwnerId:     id,
 		TypeId:      typeInt,
 		Capacity:    capacityInt,
-		LocationId:  locationInt,
+		Location:    location,
 		Description: description,
 	}
 
@@ -162,7 +156,7 @@ func (m *Repository) UpdateService(w http.ResponseWriter, r *http.Request) {
 	ownerId := r.FormValue("owner_id")
 	price := r.FormValue("price")
 	oldImage := r.FormValue("old_image")
-	typeId := r.FormValue("type")
+	typeId := r.FormValue("type_id")
 	capacity := r.FormValue("capacity")
 	location := r.FormValue("location")
 	description := r.FormValue("description")
@@ -195,12 +189,6 @@ func (m *Repository) UpdateService(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	locationInt, err := strconv.Atoi(location)
-	if err != nil {
-		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
-		return
-	}
-
 	// validate owner of user
 	if idUser != ownerInt {
 		utilities.WriteJsonError(w, errors.New("not allowed"), http.StatusBadRequest)
@@ -226,7 +214,7 @@ func (m *Repository) UpdateService(w http.ResponseWriter, r *http.Request) {
 		Image:       filename,
 		TypeId:      typeInt,
 		Capacity:    capacityInt,
-		LocationId:  locationInt,
+		Location:    location,
 		Description: description,
 	}
 
@@ -296,7 +284,7 @@ func (m *Repository) DeleteService(w http.ResponseWriter, r *http.Request) {
 
 // ListPopService handler for list service
 func (m *Repository) ListPopService(w http.ResponseWriter, r *http.Request) {
-	services, err := m.DB.ListPopularServices(2)
+	services, err := m.DB.ListPopularServices(5)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
 		return

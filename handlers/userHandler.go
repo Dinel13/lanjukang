@@ -112,7 +112,7 @@ func (m *Repository) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// check if the password is correct
 	err = bcrypt.CompareHashAndPassword([]byte(existUser.Password), []byte(user.Password))
 	if err != nil {
-		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		utilities.WriteJsonError(w, errors.New("password tidak cocok"), http.StatusInternalServerError)
 		return
 	}
 

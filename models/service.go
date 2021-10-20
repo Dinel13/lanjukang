@@ -10,7 +10,7 @@ type Service struct {
 	Image       string    `json:"image"`
 	TypeId      int       `json:"type_id"`
 	Capacity    int       `json:"capacity"`
-	LocationId  int       `json:"location_id"`
+	Location    string    `json:"location"`
 	Description string    `json:"description"`
 	Rating      float32   `json:"rating"`
 	Comments    []Comment `json:"comments"`
@@ -58,7 +58,7 @@ type ServiceRequest struct {
 	OwnerId     int    `json:"owner_id"`
 	TypeId      int    `json:"type_id"`
 	Capacity    int    `json:"capacity"`
-	LocationId  int    `json:"location_id"`
+	Location    string `json:"location"`
 	Description string `json:"description"`
 }
 
@@ -69,7 +69,7 @@ type ServiceUpdateRequest struct {
 	Image       string `json:"image"`
 	TypeId      int    `json:"type_id"`
 	Capacity    int    `json:"capacity"`
-	LocationId  int    `json:"location_id"`
+	Location    string `json:"location"`
 	Description string `json:"description"`
 }
 
@@ -80,7 +80,7 @@ type ServicePostCreate struct {
 	Image       string `json:"image"`
 	TypeId      int    `json:"type_id"`
 	Capacity    int    `json:"capacity"`
-	LocationId  int    `json:"location_id"`
+	Location    string `json:"location"`
 	Description string `json:"description"`
 }
 
