@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -339,8 +340,28 @@ func (m *Repository) BecomeAdminHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	// get data from request
+	var userBecomeAdmin models.UserBecomeAdminRequest
+	err = json.NewDecoder(r.Body).Decode(&userBecomeAdmin)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Println(userBecomeAdmin.Name)
+	// check if name is exist
+	userExist, err := m.DB.GetUserByNameService(userBecomeAdmin.Name)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+	if userExist != nil {
+		utilities.WriteJsonError(w, errors.New("nama sudah digunakan"), http.StatusBadRequest)
+		return
+	}
+
 	// update the user to become an admin
-	newUser, err := m.DB.UpdateUserRole(id)
+	newUser, err := m.DB.UpdateUserRole(id, userBecomeAdmin)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
 		return

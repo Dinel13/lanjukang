@@ -10,7 +10,8 @@ type DatabaseRepo interface {
 	GetUserByID(int) (*models.UserById, error)
 	GetUserForResetPassword(int) (*models.UserForResetPassword, error)
 	UpdateUserPasword(int, string) (*models.UserPostLogin, error)
-	UpdateUserRole(int) (*models.UserPostLogin, error)
+	UpdateUserRole(int, models.UserBecomeAdminRequest) (*models.UserPostLogin, error)
+	GetUserByNameService(string) (*int, error) // for check if name for become admin is exits
 	GetUserForOtherUser(int) (*models.UserDetail, error)
 	UpdateUserProfile(int, models.UserUpdateRequset) (*models.UserDetail, error) // not include password and image
 	UpdateUserImage(int, string) (*models.UserUpdateImage, error)

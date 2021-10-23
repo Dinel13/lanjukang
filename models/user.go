@@ -105,3 +105,9 @@ type UserUpdateImage struct {
 // 	Id    int     `json:"id"`
 // 	Image *string `json:"image"`
 // }
+
+type UserBecomeAdminRequest struct {
+	Name     string `json:"name"`
+	Rekening string `json:"rekening"`
+	Bank     string `json:"bank"`
+}

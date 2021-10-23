@@ -101,7 +101,7 @@ func ParseToken(tokenString string, secretKey string) (int, int, error) {
 
 	// cek if token expired
 	if time.Now().Unix() > expires_at_time.Unix() {
-		return 0, 0, errors.New("token expired, please login again")
+		return 0, 0, errors.New("token expired")
 	}
 
 	return int(id), int(role), nil
@@ -128,7 +128,7 @@ func ParseResetPasswordToken(tokenString string, secretKey string) (int, error) 
 
 	// cek if token expired
 	if time.Now().Unix() > expires_at_time.Unix() {
-		return 0, errors.New("token expired, please login again")
+		return 0, errors.New("token expired")
 	}
 
 	return int(id), nil

@@ -71,13 +71,21 @@ func (m *postgresDbRepo) UpdateUserPasword(id int, password string) (*models.Use
 }
 
 // BecomeAdmin changes user role to admin
-func (m *postgresDbRepo) UpdateUserRole(id int) (*models.UserPostLogin, error) {
+func (m *postgresDbRepo) UpdateUserRole(id int, userData models.UserBecomeAdminRequest) (*models.UserPostLogin, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	stmt := `UPDATE users SET role = $1 WHERE id = $2 RETURNING id, role, nick_name`
+	stmt := `UPDATE users SET role = $1, name_service = $2, rekening = $3, bank = $4
+				WHERE id = $5
+				RETURNING id, role, nick_name`
 
-	row := m.DB.QueryRowContext(ctx, stmt, 1, id)
+	row := m.DB.QueryRowContext(ctx, stmt,
+		1,
+		userData.Name,
+		userData.Rekening,
+		userData.Bank,
+		id,
+	)
 
 	var user models.UserPostLogin
 	err := row.Scan(
@@ -278,4 +286,24 @@ func (m *postgresDbRepo) GetUserForResetPassword(id int) (*models.UserForResetPa
 	}
 
 	return &user, nil
+}
+
+// GetUserByNameService returns true if user exists
+func (m *postgresDbRepo) GetUserByNameService(name string) (*int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `SELECT id FROM users WHERE name_service = $1`
+	row := m.DB.QueryRowContext(ctx, stmt, name)
+
+	var idUser int
+	err := row.Scan(&idUser)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return &idUser, nil
 }
