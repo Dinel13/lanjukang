@@ -15,8 +15,8 @@ func (m *postgresDbRepo) CreateService(service models.ServiceRequest) (*models.S
 	stmt := `INSERT INTO services (name, price, image, owner_id, type_id, capacity,
 		 						location, description, start, destiny, date, time, distance, duration )
 				VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13 , $14)
-				RETURNING id, name, price, image, type_id, capacity,
-							location, description`
+				RETURNING id, name, price, image, type_id, capacity, location, description,
+								start, destiny, date, time, distance, duration`
 
 	row := m.DB.QueryRowContext(ctx, stmt,
 		service.Name,
@@ -46,6 +46,12 @@ func (m *postgresDbRepo) CreateService(service models.ServiceRequest) (*models.S
 		&newServices.Capacity,
 		&newServices.Location,
 		&newServices.Description,
+		&newServices.Start,
+		&newServices.Destiny,
+		&newServices.Date,
+		&newServices.Time,
+		&newServices.Distance,
+		&newServices.Duration,
 	)
 
 	if err != nil {

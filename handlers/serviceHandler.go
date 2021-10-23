@@ -36,7 +36,7 @@ func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 	capacity := r.FormValue("capacity")
 	location := r.FormValue("location")
 	description := r.FormValue("description")
-	start := r.FormValue("from")
+	start := r.FormValue("start")
 	destiny := r.FormValue("destiny")
 	time := r.FormValue("time")
 	date := r.FormValue("date")

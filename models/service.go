@@ -80,15 +80,21 @@ type ServiceUpdateRequest struct {
 }
 
 type ServicePostCreate struct {
-	Id          int    `json:"id"`
-	Name        string `json:"name"`
-	Price       int    `json:"price"`
-	Image       string `json:"image"`
-	TypeId      int    `json:"type_id"`
-	Type        string `json:"type"`
-	Capacity    int    `json:"capacity"`
-	Location    string `json:"location"`
-	Description string `json:"description"`
+	Id          int       `json:"id"`
+	Name        string    `json:"name"`
+	Price       int       `json:"price"`
+	Image       string    `json:"image"`
+	TypeId      int       `json:"type_id"`
+	Type        string    `json:"type"`
+	Capacity    int       `json:"capacity"`
+	Location    string    `json:"location"`
+	Description string    `json:"description"`
+	Start       string    `json:"start"`
+	Destiny     string    `json:"destiny"`
+	Time        time.Time `json:"time"`
+	Date        time.Time `json:"date"`
+	Distance    int       `json:"distance"`
+	Duration    string    `json:"duration"`
 }
 
 // ServiceDeleteRequest for incoming request delete
