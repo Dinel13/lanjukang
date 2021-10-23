@@ -52,14 +52,20 @@ type ServiceDetailResponse struct {
 
 // ServiceRequest for incoming request
 type ServiceRequest struct {
-	Name        string `json:"name"`
-	Price       int    `json:"price"`
-	Image       string `json:"image"`
-	OwnerId     int    `json:"owner_id"`
-	TypeId      int    `json:"type_id"`
-	Capacity    int    `json:"capacity"`
-	Location    string `json:"location"`
-	Description string `json:"description"`
+	Name        string    `json:"name"`
+	Price       int       `json:"price"`
+	Image       string    `json:"image"`
+	OwnerId     int       `json:"owner_id"`
+	TypeId      int       `json:"type_id"`
+	Capacity    int       `json:"capacity"`
+	Location    string    `json:"location"`
+	Description string    `json:"description"`
+	Start       string    `json:"start"`
+	Destiny     string    `json:"destiny"`
+	Time        time.Time `json:"time"`
+	Date        time.Time `json:"date"`
+	Distance    int       `json:"distance"`
+	Duration    string    `json:"duration"`
 }
 
 // ServiceUpdateRequest for incoming request

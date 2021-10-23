@@ -36,6 +36,12 @@ func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 	capacity := r.FormValue("capacity")
 	location := r.FormValue("location")
 	description := r.FormValue("description")
+	start := r.FormValue("from")
+	destiny := r.FormValue("destiny")
+	time := r.FormValue("time")
+	date := r.FormValue("date")
+	distance := r.FormValue("distance")
+	duration := r.FormValue("duration")
 
 	// validate
 
@@ -55,6 +61,24 @@ func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 	}
 
 	capacityInt, err := strconv.Atoi(capacity)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	distanceInt, err := strconv.Atoi(distance)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	// CONVERT TO DATE
+	startTime, err := utilities.ConvertToTimeHour(time)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+	startDate, err := utilities.ConvertToDate(date)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
 		return
@@ -83,6 +107,12 @@ func (m *Repository) CreateService(w http.ResponseWriter, r *http.Request) {
 		Capacity:    capacityInt,
 		Location:    location,
 		Description: description,
+		Start:       start,
+		Destiny:     destiny,
+		Time:        startTime,
+		Date:        startDate,
+		Distance:    distanceInt,
+		Duration:    duration,
 	}
 
 	newService, err := m.DB.CreateService(service)

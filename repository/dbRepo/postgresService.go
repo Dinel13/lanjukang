@@ -13,8 +13,8 @@ func (m *postgresDbRepo) CreateService(service models.ServiceRequest) (*models.S
 	defer cancel()
 
 	stmt := `INSERT INTO services (name, price, image, owner_id, type_id, capacity,
-		 						location, description)
-				VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		 						location, description, start, destiny, date, time, distance, duration )
+				VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13 , $14)
 				RETURNING id, name, price, image, type_id, capacity,
 							location, description`
 
@@ -27,6 +27,12 @@ func (m *postgresDbRepo) CreateService(service models.ServiceRequest) (*models.S
 		service.Capacity,
 		service.Location,
 		service.Description,
+		service.Start,
+		service.Destiny,
+		service.Date,
+		service.Time,
+		service.Distance,
+		service.Duration,
 	)
 
 	var newServices models.ServicePostCreate
