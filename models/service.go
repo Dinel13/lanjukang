@@ -79,6 +79,7 @@ type ServicePostCreate struct {
 	Price       int    `json:"price"`
 	Image       string `json:"image"`
 	TypeId      int    `json:"type_id"`
+	Type        string `json:"type"`
 	Capacity    int    `json:"capacity"`
 	Location    string `json:"location"`
 	Description string `json:"description"`

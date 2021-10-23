@@ -46,6 +46,13 @@ func (m *postgresDbRepo) CreateService(service models.ServiceRequest) (*models.S
 		return nil, err
 	}
 
+	typeServiceQuery := `SELECT name FROM type_services WHERE id = $1`
+	rowType := m.DB.QueryRowContext(ctx, typeServiceQuery, service.TypeId)
+	err = rowType.Scan(&newServices.Type)
+	if err != nil {
+		return nil, err
+	}
+
 	return &newServices, nil
 }
 
@@ -150,11 +157,11 @@ func (m *postgresDbRepo) ListAllServices(limit int) ([]models.ServiceResponse, e
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	stmt := `SELECT s.id, s.name, s.price, s.image, s.capacity, u.nick_name, u.id, t.name,  l.name
+	stmt := `SELECT s.id, s.name, s.price, s.image, s.capacity, s.location, u.nick_name, u.id, t.name
 				FROM services s
-				LEFT JOIN locations l ON s.location = l.id
 				LEFT JOIN type_services t ON s.type_id = t.id
 				LEFT JOIN users u ON s.owner_id = u.id
+				ORDER BY s.rating DESC
 				LIMIT $1`
 
 	rows, err := m.DB.QueryContext(ctx, stmt, limit)
@@ -174,10 +181,10 @@ func (m *postgresDbRepo) ListAllServices(limit int) ([]models.ServiceResponse, e
 			&service.Price,
 			&service.Image,
 			&service.Capacity,
+			&service.Location,
 			&service.Owner,
 			&service.OwnerId,
 			&service.Type,
-			&service.Location,
 		)
 
 		if err != nil {

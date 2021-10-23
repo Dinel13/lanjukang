@@ -115,7 +115,7 @@ func (m *Repository) GetServiceDetail(w http.ResponseWriter, r *http.Request) {
 
 // ListAllService handler for list all service
 func (m *Repository) ListAllService(w http.ResponseWriter, r *http.Request) {
-	services, err := m.DB.ListAllServices(5)
+	services, err := m.DB.ListAllServices(10)
 	if err != nil {
 		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
 		return
