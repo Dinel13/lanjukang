@@ -73,7 +73,8 @@ func (m *postgresDbRepo) GetDetailServiceByID(id int) (*models.ServiceDetailResp
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	stmt := `SELECT s.id, s.name, s.price, s.image, s.capacity, s.location, s.description, u.nick_name, u.id, t.name
+	stmt := `SELECT s.id, s.name, s.price, s.image, s.capacity, s.location, s.description, s.start, 
+						s.destiny, s.date, s.time, s.distance, s.duration, u.name_service, u.id, t.name
 				FROM services s
 				JOIN users u ON s.owner_id = u.id
 				JOIN type_services t ON s.type_id = t.id
@@ -91,6 +92,12 @@ func (m *postgresDbRepo) GetDetailServiceByID(id int) (*models.ServiceDetailResp
 		&service.Capacity,
 		&service.Location,
 		&service.Description,
+		&service.Start,
+		&service.Destiny,
+		&service.Date,
+		&service.Time,
+		&service.Distance,
+		&service.Duration,
 		&service.Owner,
 		&service.OwnerId,
 		&service.Type,

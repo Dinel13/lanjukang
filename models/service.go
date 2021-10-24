@@ -36,18 +36,23 @@ type ServiceResponse struct {
 // ServiceDetailResponse is a responsen for detail service
 // return all field of service
 type ServiceDetailResponse struct {
-	Id          int     `json:"id"`
-	Owner       string  `json:"owner"`
-	OwnerId     int     `json:"owner_id"`
-	Name        string  `json:"name"`
-	Price       int     `json:"price"`
-	Image       string  `json:"image"`
-	Type        string  `json:"type"`
-	Capacity    int     `json:"capacity"`
-	Location    string  `json:"location"`
-	Rating      float32 `json:"rating"`
-	Description string  `json:"description"`
-	// Comments    []Comment `json:"comments"`
+	Id          int       `json:"id"`
+	Owner       string    `json:"owner"`
+	OwnerId     int       `json:"owner_id"`
+	Name        string    `json:"name"`
+	Price       int       `json:"price"`
+	Image       string    `json:"image"`
+	Type        string    `json:"type"`
+	Capacity    int       `json:"capacity"`
+	Location    string    `json:"location"`
+	Rating      float32   `json:"rating"`
+	Description string    `json:"description"`
+	Start       string    `json:"start"`
+	Destiny     string    `json:"destiny"`
+	Time        time.Time `json:"time"`
+	Date        time.Time `json:"date"`
+	Distance    int       `json:"distance"`
+	Duration    string    `json:"duration"`
 }
 
 // ServiceRequest for incoming request
