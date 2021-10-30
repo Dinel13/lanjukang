@@ -27,5 +27,5 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd /var/www/lanjukang
-            git pull origin deploy
+            git pull origin main
             systemctl restart lanjukang
