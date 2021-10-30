@@ -322,3 +322,19 @@ func (m *Repository) ListPopService(w http.ResponseWriter, r *http.Request) {
 
 	utilities.WriteJson(w, http.StatusOK, services, "services")
 }
+
+// SeachService handler list service by query
+func (m *Repository) SeachService(w http.ResponseWriter, r *http.Request) {
+	// get query from url
+	queryValues := r.URL.Query()
+	query := queryValues.Get("q")
+
+	// get data from database
+	services, err := m.DB.ListAllServicesBySearch(query)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	utilities.WriteJson(w, http.StatusOK, services, "services")
+}

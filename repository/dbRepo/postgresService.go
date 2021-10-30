@@ -368,3 +368,48 @@ func (m *postgresDbRepo) ListPopularServices(limit int) ([]models.ServiceRespons
 
 	return services, nil
 }
+
+func (m *postgresDbRepo) ListAllServicesBySearch(q string) ([]models.ServiceResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `SELECT s.id, s.name, s.price, s.image, s.capacity, s.location, u.nick_name, u.id, t.name
+				FROM services s
+				LEFT JOIN type_services t ON s.type_id = t.id
+				LEFT JOIN users u ON s.owner_id = u.id
+				WHERE s.name LIKE $1 OR s.description LIKE $1 OR s.location LIKE $1 OR t.name LIKE $1
+				ORDER BY s.rating DESC
+				LIMIT 10`
+
+	rows, err := m.DB.QueryContext(ctx, stmt, q)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var services []models.ServiceResponse
+
+	for rows.Next() {
+		var service models.ServiceResponse
+
+		err = rows.Scan(
+			&service.Id,
+			&service.Name,
+			&service.Price,
+			&service.Image,
+			&service.Capacity,
+			&service.Location,
+			&service.Owner,
+			&service.OwnerId,
+			&service.Type,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		services = append(services, service)
+	}
+
+	return services, nil
+}

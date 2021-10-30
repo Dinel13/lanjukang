@@ -20,9 +20,9 @@ CREATE TABLE "services" (
   "price" int NOT NULL,
   "image" varchar NOT NULL,
   "type_id" int NOT NULL,
-  "location" int NOT NULL,
+  "location" VARCHAR NOT NULL,
   "capacity" int NOT NULL DEFAULT 1,
-  "descriptin" TEXT NOT NULL,
+  "description" TEXT NOT NULL,
   "rating" INT DEFAULT NULL,
   "comments" INT DEFAULT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
@@ -62,8 +62,9 @@ ADD FOREIGN KEY ("owner_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 ALTER TABLE "services"
 ADD FOREIGN KEY ("type_id") REFERENCES "type_services" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "services"
-ADD FOREIGN KEY ("location") REFERENCES "locations" ("id") ON DELETE CASCADE;
+
+-- ALTER TABLE "services"
+-- ADD FOREIGN KEY ("location") REFERENCES "locations" ("id") ON DELETE CASCADE;
 
 ALTER TABLE "services"
 ADD FOREIGN KEY ("comments") REFERENCES "comments" ("id") ON DELETE CASCADE;
@@ -76,5 +77,5 @@ CREATE INDEX ON "services" ("id");
 CREATE INDEX ON "type_services" ("id");
 CREATE INDEX ON "locations" ("id");
 CREATE INDEX ON "comments" ("id");
-CREATE INDEX ON "services" ("owner_id", "type_id", "location", "comments" );
+CREATE INDEX ON "services" ("owner_id", "type_id", "comments" );
 CREATE INDEX ON "comments" ("userId");
