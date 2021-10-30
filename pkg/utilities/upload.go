@@ -19,7 +19,7 @@ func UploadedImage(uploadedImage multipart.File, header *multipart.FileHeader, f
 	// change woking direktory in server
 	// becouse in server the cwd is in /
 	if dir != "/home/din/project/Lanjukang-be" {
-		dir = "/var/www/wisata"
+		dir = "/var/www/lanjukang"
 	}
 
 	filename := fmt.Sprintf("%d%s", time.Now().UnixNano(), filepath.Ext(header.Filename))

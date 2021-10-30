@@ -28,4 +28,4 @@ jobs:
           script: |
             cd /var/www/lanjukang
             git pull origin deploy
-            systemctl restart wisata
+            systemctl restart lanjukang
