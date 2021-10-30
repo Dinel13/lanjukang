@@ -51,7 +51,7 @@ func DeleteImage(filename string, folder string) error {
 	// change woking direktory in server
 	// becouse in server the cwd is in /
 	if dir != "/home/din/project/Lanjukang-be" {
-		dir = "/var/www/wisata"
+		dir = "/var/www/lanjukang"
 	}
 
 	fileLocation := filepath.Join(dir, "images", folder, filename)
