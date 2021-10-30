@@ -373,6 +373,8 @@ func (m *postgresDbRepo) ListAllServicesBySearch(q string) ([]models.ServiceResp
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
+	search := "%" + q + "%"
+
 	stmt := `SELECT s.id, s.name, s.price, s.image, s.capacity, s.location, u.nick_name, u.id, t.name
 				FROM services s
 				LEFT JOIN type_services t ON s.type_id = t.id
@@ -381,7 +383,7 @@ func (m *postgresDbRepo) ListAllServicesBySearch(q string) ([]models.ServiceResp
 				ORDER BY s.rating DESC
 				LIMIT 10`
 
-	rows, err := m.DB.QueryContext(ctx, stmt, q)
+	rows, err := m.DB.QueryContext(ctx, stmt, search)
 
 	if err != nil {
 		return nil, err
