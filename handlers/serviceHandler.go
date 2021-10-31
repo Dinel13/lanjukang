@@ -338,3 +338,23 @@ func (m *Repository) SeachService(w http.ResponseWriter, r *http.Request) {
 
 	utilities.WriteJson(w, http.StatusOK, services, "services")
 }
+
+// ServiceByType handler for list service by type
+func (m *Repository) ServiceByType(w http.ResponseWriter, r *http.Request) {
+	// get id from url
+	params := httprouter.ParamsFromContext(r.Context())
+	id, err := strconv.Atoi(params.ByName("id"))
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	// get data from database
+	services, err := m.DB.ListAllServicesByType(id, 10)
+	if err != nil {
+		utilities.WriteJsonError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	utilities.WriteJson(w, http.StatusOK, services, "services")
+}

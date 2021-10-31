@@ -38,6 +38,7 @@ func routes(app *config.AppConfig) http.Handler {
 	r.HandlerFunc(http.MethodPut, "/service/update/:id", handlers.Repo.UpdateService)
 	r.HandlerFunc(http.MethodDelete, "/service/delete/:id", handlers.Repo.DeleteService)
 	r.HandlerFunc(http.MethodGet, "/service/search", handlers.Repo.SeachService)
+	r.HandlerFunc(http.MethodGet, "/service/type/:id", handlers.Repo.ServiceByType)
 
 	// Booking
 	r.HandlerFunc(http.MethodPost, "/booking/create", handlers.Repo.CreateBookingHandler)

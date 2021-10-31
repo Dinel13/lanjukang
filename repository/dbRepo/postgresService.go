@@ -221,9 +221,8 @@ func (m *postgresDbRepo) ListAllServicesByType(typeId int, limit int) ([]models.
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	stmt := `SELECT s.id, s.name, s.price, s.image, s.capacity, u.nick_name, u.id, t.name,  l.name
+	stmt := `SELECT s.id, s.name, s.price, s.image, s.capacity, s.location, u.nick_name, u.id, t.name
 				FROM services s
-				LEFT JOIN locations l ON s.location = l.id
 				LEFT JOIN type_services t ON s.type_id = t.id
 				LEFT JOIN users u ON s.owner_id = u.id
 				WHERE s.type_id = $1
@@ -246,10 +245,10 @@ func (m *postgresDbRepo) ListAllServicesByType(typeId int, limit int) ([]models.
 			&service.Price,
 			&service.Image,
 			&service.Capacity,
+			&service.Location,
 			&service.Owner,
 			&service.OwnerId,
 			&service.Type,
-			&service.Location,
 		)
 
 		if err != nil {
